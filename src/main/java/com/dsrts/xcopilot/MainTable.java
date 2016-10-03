@@ -49,9 +49,12 @@ public class MainTable extends JTable {
         SwingUtilities.invokeLater(this::loadTable);
     }
     private void loadTable() {
-        this.setModel(new MainTableModel(radioDataManager.getNavDataList()));
+        clearSelection();
+        this.setModel(new MainTableModel(radioDataManager.getDistanceFilteredNavDataList()));
+        selectListenerConsumers.forEach(c -> c.accept(null));
     }
     public static class MainTableModel extends AbstractTableModel {
+        private String[] columnNames = {"Code","Lat","Lon","MSL","Hz","Ident","Desc"};
         private List<RadioDataManager.NavData> navDataList;
         public MainTableModel(List<RadioDataManager.NavData> navDataList) {
             this.navDataList = navDataList;
@@ -66,7 +69,12 @@ public class MainTable extends JTable {
 
         @Override
         public int getColumnCount() {
-            return 6;
+            return 7;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return columnNames[column];
         }
 
         @Override
@@ -90,6 +98,9 @@ public class MainTable extends JTable {
                     o = navData.getFrequency();
                     break;
                 case 5:
+                    o = navData.getIdent();
+                    break;
+                case 6:
                     o = navData.getDescription();
                     break;
             }

@@ -4,8 +4,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.math.BigDecimal;
@@ -18,28 +20,57 @@ public class RadioDataManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(RadioDataManager.class);
 
     private XPlaneConnectService xPlaneConnectService;
+    private SettingsManager settingsManager;
+    private Geo geo = new Geo();
 
-    private File radioDataFile;
-    List<NavData> navDataList = Arrays.asList(new NavData());
+    private File navDataFile;
+
+    List<NavData> navDataList = new ArrayList<>();
+    List<NavData> distanceFilterednavDataList = new ArrayList<>();
+
+    private GeoPoint planePosition;
 
     List<ActionListener> listeners = new ArrayList<>();
 
-    public RadioDataManager(XPlaneConnectService xPlaneConnectService) {
+    public RadioDataManager(XPlaneConnectService xPlaneConnectService,SettingsManager settingsManager) {
         this.xPlaneConnectService = xPlaneConnectService;
+        this.settingsManager = settingsManager;
     }
     public void addNavDataLoadListener(ActionListener actionListener) {
         listeners.add(actionListener);
     }
-    public List<NavData> getNavDataList() {
-        return navDataList;
+    public List<NavData> getDistanceFilteredNavDataList() {
+        return distanceFilterednavDataList;
     }
-    public void setRadioDataFile(File radioDataFile) {
-        this.radioDataFile = radioDataFile;
+    @Scheduled(fixedRate = 10000)
+    protected void update() {
+        String home = settingsManager.getProperty(SettingsManager.KEY_XPLANE_HOME);
+        if(null != home) {
+            navDataFile = new File(home,"Resources");
+            navDataFile = new File(navDataFile,"default data");
+            navDataFile = new File(navDataFile,"earth_nav.dat");
+        }
+        if(null != navDataFile) {
+            synchronized (navDataList) {
+                if(navDataList.size() < 1) {
+                    loadRadioData();
+                }
+            }
+        }
+        if(null == planePosition || geo.distanceNM(planePosition,new GeoPoint(xPlaneConnectService.getPlanePosition())) > 10.0) {
+            planePosition = new GeoPoint(xPlaneConnectService.getPlanePosition());
+            loadFilteredRadioData();
+        }
     }
-    @Async
-    public void loadRadioData() {
+    private void loadFilteredRadioData() {
+        distanceFilterednavDataList = navDataList.stream()
+                .filter(n -> geo.distanceNM(planePosition,new GeoPoint(n)) < 200.0)
+                .collect(Collectors.toList());
+        listeners.forEach(l -> l.actionPerformed(null));
+    }
+    private void loadRadioData() {
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(radioDataFile));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(navDataFile));
             List<NavData> list = bufferedReader.lines()
                     .filter(s -> s.startsWith("3") || s.startsWith("4"))
                     .map(s -> {
@@ -57,17 +88,22 @@ public class RadioDataManager {
                                 // slaved variation ?
                                 scanner.next();
                                 // ident
-                                scanner.next();
+                                navData.setIdent(scanner.next());
                                 // name
-                                navData.setDescription(scanner.next());
+                                {
+                                    StringBuilder builder = new StringBuilder();
+                                    scanner.forEachRemaining(name -> {builder.append(name);builder.append(" ");} );
+                                    navData.setDescription(builder.toString().trim());
+                                }
                                 break;
                             case 4:
-                                StringBuilder builder = new StringBuilder();
                                 // localiser bearing true degrees
                                 scanner.next();
                                 // ident
-                                scanner.next();
+                                navData.setIdent(scanner.next());
                                 // ICAO code
+                                {
+                                StringBuilder builder = new StringBuilder();
                                 builder.append(scanner.next());
                                 // runway number
                                 builder.append(" RWY ");
@@ -76,13 +112,14 @@ public class RadioDataManager {
                                 builder.append(" ");
                                 builder.append(scanner.next());
                                 navData.setDescription(builder.toString());
+                                }
                                 break;
                         }
                         return navData;
                     })
                     .collect(Collectors.toList());
             navDataList = Collections.unmodifiableList(list);
-            listeners.forEach(l -> l.actionPerformed(null));
+
         } catch (IOException e) {
             LOGGER.warn("loadRadioData()",e);
         }
@@ -93,6 +130,7 @@ public class RadioDataManager {
         private BigDecimal longitude;
         private Integer elevationMSL;
         private BigDecimal frequency;
+        private String ident;
         private String description;
 
         public Integer getCode() {
@@ -133,6 +171,14 @@ public class RadioDataManager {
 
         public void setFrequency(BigDecimal frequency) {
             this.frequency = frequency;
+        }
+
+        public String getIdent() {
+            return ident;
+        }
+
+        public void setIdent(String ident) {
+            this.ident = ident;
         }
 
         public String getDescription() {

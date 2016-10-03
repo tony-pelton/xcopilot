@@ -18,14 +18,9 @@ public class SettingsManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsManager.class);
     public static final String KEY_XPLANE_HOME = "xplane.home";
 
-    private final RadioDataManager radioDataManager;
     private Properties properties = new Properties();
     private static File fileProperties = new File(System.getProperty("user.home")+System.getProperty("file.separator")+"xcopilot.properties");
-    private File navDataFile;
 
-    public SettingsManager(RadioDataManager radioDataManager) {
-        this.radioDataManager = radioDataManager;
-    }
     public void decideXPlaneHome(Component parent) {
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -33,21 +28,18 @@ public class SettingsManager {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             File home = jFileChooser.getSelectedFile();
             LOGGER.info("decideXPlaneHome() : choice {}",home.toString());
-            navDataFile = new File(home,"Resources");
-            navDataFile = new File(navDataFile,"default data");
-            navDataFile = new File(navDataFile,"earth_nav.dat");
-            LOGGER.info("decideXPlaneHome() : calculated navDataFile data path {}", navDataFile.toString());
-            LOGGER.info("decideXPlaneHome() : isFile {}", navDataFile.isFile());
-            if(navDataFile.isFile()) {
-                properties.setProperty(KEY_XPLANE_HOME, navDataFile.getAbsolutePath());
+            File fileResourcesDirectory = new File(home,"Resources");
+            if(fileResourcesDirectory.isDirectory()) {
+                LOGGER.info("decideXPlaneHome() : isDirectory {}", fileResourcesDirectory.isDirectory());
+                properties.setProperty(KEY_XPLANE_HOME, home.getAbsolutePath());
                 persistProperties();
-                loadRadioData();
+            } else {
+                LOGGER.warn("decideXPlaneHome() : not x-plane home");
             }
         }
     }
-    private void loadRadioData() {
-        radioDataManager.setRadioDataFile(navDataFile);
-        radioDataManager.loadRadioData();
+    public String getProperty(String key) {
+        return properties.getProperty(key);
     }
     private void persistProperties() {
         try {
@@ -61,10 +53,6 @@ public class SettingsManager {
         if(fileProperties.exists()) {
             try {
                 properties.loadFromXML(new FileInputStream(fileProperties));
-                if(properties.containsKey(KEY_XPLANE_HOME)) {
-                    navDataFile = new File(properties.getProperty(KEY_XPLANE_HOME));
-                    loadRadioData();
-                }
             } catch (IOException e) {
                 LOGGER.warn("init<>",e);
             }

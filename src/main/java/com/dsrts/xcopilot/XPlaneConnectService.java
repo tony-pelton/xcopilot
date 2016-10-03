@@ -17,11 +17,29 @@ public class XPlaneConnectService {
     private static final Logger LOGGER = LoggerFactory.getLogger(XPlaneConnectService.class);
 
     private XPlaneConnect xPlaneConnect;
+
+    private PlanePosition planePosition;
+
     // ksts
-    private PlanePosition planePosition = new PlanePosition(38.51513f,122.81252f);
+    private PlanePosition planePositionKsts = new PlanePosition(38.51513f,-122.81252f);
+    // nonsense
+    private PlanePosition planePositionNonsense = new PlanePosition(38.51513f,122.81252f);
 
     public XPlaneConnectService() throws SocketException {
         this.xPlaneConnect = new XPlaneConnect();
+        this.planePosition = planePositionKsts;
+    }
+
+    public void test() {
+        if(planePositionKsts == planePosition) {
+            planePosition = planePositionNonsense;
+        } else {
+            planePosition = planePositionKsts;
+        }
+    }
+
+    public PlanePosition getPlanePosition() {
+        return planePosition;
     }
 
     public void sendDREF(String dref,float value) {
