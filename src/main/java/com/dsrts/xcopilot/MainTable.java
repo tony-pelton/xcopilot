@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 public class MainTable extends JTable {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainTable.class);
     private RadioDataManager radioDataManager;
-    private List<Consumer<RadioDataManager.NavData>> selectListenerConsumers = new ArrayList();
+    private List<Consumer<NavDataPoint>> selectListenerConsumers = new ArrayList();
     @Autowired
     public MainTable(RadioDataManager radioDataManager) {
         this.radioDataManager = radioDataManager;
@@ -36,12 +36,12 @@ public class MainTable extends JTable {
         if(!listSelectionEvent.getValueIsAdjusting()) {
             // pointer to row
             listSelectionEvent.getLastIndex();
-            RadioDataManager.NavData navDataAt = ((MainTableModel) getModel()).getNavDataAt(listSelectionEvent.getLastIndex());
-            LOGGER.info( (navDataAt.toString()));
-            selectListenerConsumers.forEach( c -> c.accept(navDataAt));
+            NavDataPoint navDataPointAt = ((MainTableModel) getModel()).getNavDataAt(listSelectionEvent.getLastIndex());
+            LOGGER.info( (navDataPointAt.toString()));
+            selectListenerConsumers.forEach( c -> c.accept(navDataPointAt));
         }
     }
-    public void addSelectListner(Consumer<RadioDataManager.NavData> navDataConsumer) {
+    public void addSelectListner(Consumer<NavDataPoint> navDataConsumer) {
         selectListenerConsumers.add(navDataConsumer);
     }
     private void dataLoadListener(ActionEvent actionEvent) {
@@ -55,16 +55,16 @@ public class MainTable extends JTable {
     }
     public static class MainTableModel extends AbstractTableModel {
         private String[] columnNames = {"Code","Lat","Lon","MSL","Hz","Ident","Desc"};
-        private List<RadioDataManager.NavData> navDataList;
-        public MainTableModel(List<RadioDataManager.NavData> navDataList) {
-            this.navDataList = navDataList;
+        private List<NavDataPoint> navDataPointList;
+        public MainTableModel(List<NavDataPoint> navDataPointList) {
+            this.navDataPointList = navDataPointList;
         }
-        public RadioDataManager.NavData getNavDataAt(int index) {
-            return navDataList.get(index);
+        public NavDataPoint getNavDataAt(int index) {
+            return navDataPointList.get(index);
         }
         @Override
         public int getRowCount() {
-            return navDataList.size();
+            return navDataPointList.size();
         }
 
         @Override
@@ -79,29 +79,29 @@ public class MainTable extends JTable {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            RadioDataManager.NavData navData = navDataList.get(rowIndex);
+            NavDataPoint navDataPoint = navDataPointList.get(rowIndex);
             Object o = "";
             switch (columnIndex) {
                 case 0:
-                    o = navData.getCode();
+                    o = navDataPoint.getCode();
                     break;
                 case 1:
-                    o = navData.getLatitude();
+                    o = navDataPoint.getLatitude();
                     break;
                 case 2:
-                    o = navData.getLongitude();
+                    o = navDataPoint.getLongitude();
                     break;
                 case 3:
-                    o = navData.getElevationMSL();
+                    o = navDataPoint.getElevationMSL();
                     break;
                 case 4:
-                    o = navData.getFrequency();
+                    o = navDataPoint.getFrequency();
                     break;
                 case 5:
-                    o = navData.getIdent();
+                    o = navDataPoint.getIdent();
                     break;
                 case 6:
-                    o = navData.getDescription();
+                    o = navDataPoint.getDescription();
                     break;
             }
             return o;

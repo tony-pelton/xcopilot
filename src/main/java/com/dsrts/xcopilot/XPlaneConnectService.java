@@ -1,7 +1,6 @@
 package com.dsrts.xcopilot;
 
 import gov.nasa.xpc.XPlaneConnect;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,12 +17,12 @@ public class XPlaneConnectService {
 
     private XPlaneConnect xPlaneConnect;
 
-    private PlanePosition planePosition;
+    private GeoPoint planePosition;
 
     // ksts
-    private PlanePosition planePositionKsts = new PlanePosition(38.51513f,-122.81252f);
+    private GeoPoint planePositionKsts = new GeoPoint(38.51513f,-122.81252f);
     // nonsense
-    private PlanePosition planePositionNonsense = new PlanePosition(38.51513f,122.81252f);
+    private GeoPoint planePositionNonsense = new GeoPoint(38.51513f,122.81252f);
 
     public XPlaneConnectService() throws SocketException {
         this.xPlaneConnect = new XPlaneConnect();
@@ -38,7 +37,7 @@ public class XPlaneConnectService {
         }
     }
 
-    public PlanePosition getPlanePosition() {
+    public GeoPoint getPlanePosition() {
         return planePosition;
     }
 
@@ -59,7 +58,7 @@ public class XPlaneConnectService {
             synchronized (xPlaneConnect) {
                 posi = xPlaneConnect.getPOSI(0);
             }
-            planePosition = new PlanePosition(posi[0],posi[1]);
+            planePosition = new GeoPoint(posi[0],posi[1]);
             LOGGER.info(planePosition.toString());
         } catch (IOException e) {
             LOGGER.warn("scheduled() : IO Exception; x-plane running ?");
@@ -70,27 +69,5 @@ public class XPlaneConnectService {
     private void destroy() throws Exception {
         LOGGER.info("destroy()");
         xPlaneConnect.close();
-    }
-    public static class PlanePosition {
-        private float lattitude;
-        private float longitude;
-
-        public PlanePosition(float lattitude, float longitude) {
-            this.lattitude = lattitude;
-            this.longitude = longitude;
-        }
-
-        public float getLattitude() {
-            return lattitude;
-        }
-
-        public float getLongitude() {
-            return longitude;
-        }
-
-        @Override
-        public String toString() {
-            return ToStringBuilder.reflectionToString(this);
-        }
     }
 }

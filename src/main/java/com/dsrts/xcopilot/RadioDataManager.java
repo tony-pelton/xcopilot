@@ -1,13 +1,10 @@
 package com.dsrts.xcopilot;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.math.BigDecimal;
@@ -21,12 +18,11 @@ public class RadioDataManager {
 
     private XPlaneConnectService xPlaneConnectService;
     private SettingsManager settingsManager;
-    private Geo geo = new Geo();
 
     private File navDataFile;
 
-    List<NavData> navDataList = new ArrayList<>();
-    List<NavData> distanceFilterednavDataList = new ArrayList<>();
+    List<NavDataPoint> navDataPointList = new ArrayList<>();
+    List<NavDataPoint> distanceFilteredNavDataPointList = new ArrayList<>();
 
     private GeoPoint planePosition;
 
@@ -39,8 +35,8 @@ public class RadioDataManager {
     public void addNavDataLoadListener(ActionListener actionListener) {
         listeners.add(actionListener);
     }
-    public List<NavData> getDistanceFilteredNavDataList() {
-        return distanceFilterednavDataList;
+    public List<NavDataPoint> getDistanceFilteredNavDataList() {
+        return distanceFilteredNavDataPointList;
     }
     @Scheduled(fixedRate = 10000)
     protected void update() {
@@ -51,56 +47,56 @@ public class RadioDataManager {
             navDataFile = new File(navDataFile,"earth_nav.dat");
         }
         if(null != navDataFile) {
-            synchronized (navDataList) {
-                if(navDataList.size() < 1) {
+            synchronized (navDataPointList) {
+                if(navDataPointList.size() < 1) {
                     loadRadioData();
                 }
             }
         }
-        if(null == planePosition || geo.distanceNM(planePosition,new GeoPoint(xPlaneConnectService.getPlanePosition())) > 10.0) {
-            planePosition = new GeoPoint(xPlaneConnectService.getPlanePosition());
+        if(null == planePosition || planePosition.distanceToNM(xPlaneConnectService.getPlanePosition()) > 10.0) {
+            planePosition = xPlaneConnectService.getPlanePosition();
             loadFilteredRadioData();
         }
     }
     private void loadFilteredRadioData() {
-        distanceFilterednavDataList = navDataList.stream()
-                .filter(n -> geo.distanceNM(planePosition,new GeoPoint(n)) < 200.0)
+        distanceFilteredNavDataPointList = navDataPointList.stream()
+                .filter(n -> planePosition.distanceToNM(n) < 200.0)
                 .collect(Collectors.toList());
         listeners.forEach(l -> l.actionPerformed(null));
     }
     private void loadRadioData() {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(navDataFile));
-            List<NavData> list = bufferedReader.lines()
+            List<NavDataPoint> list = bufferedReader.lines()
                     .filter(s -> s.startsWith("3") || s.startsWith("4"))
                     .map(s -> {
                         Scanner scanner = new Scanner(s);
-                        NavData navData = new NavData();
-                        navData.setCode(scanner.nextInt());
-                        navData.setLatitude(new BigDecimal(scanner.next()).setScale(8));
-                        navData.setLongitude(new BigDecimal(scanner.next()).setScale(8));
-                        navData.setElevationMSL(scanner.nextInt());
-                        navData.setFrequency(new BigDecimal(scanner.next()).divide(new BigDecimal("100")).setScale(2));
+                        NavDataPoint navDataPoint = new NavDataPoint();
+                        navDataPoint.setCode(scanner.nextInt());
+                        navDataPoint.setLatitude(new BigDecimal(scanner.next()).setScale(8));
+                        navDataPoint.setLongitude(new BigDecimal(scanner.next()).setScale(8));
+                        navDataPoint.setElevationMSL(scanner.nextInt());
+                        navDataPoint.setFrequency(new BigDecimal(scanner.next()).divide(new BigDecimal("100")).setScale(2));
                         // max range
                         scanner.next();
-                        switch (navData.getCode()) {
+                        switch (navDataPoint.getCode()) {
                             case 3:
                                 // slaved variation ?
                                 scanner.next();
                                 // ident
-                                navData.setIdent(scanner.next());
+                                navDataPoint.setIdent(scanner.next());
                                 // name
                                 {
                                     StringBuilder builder = new StringBuilder();
                                     scanner.forEachRemaining(name -> {builder.append(name);builder.append(" ");} );
-                                    navData.setDescription(builder.toString().trim());
+                                    navDataPoint.setDescription(builder.toString().trim());
                                 }
                                 break;
                             case 4:
                                 // localiser bearing true degrees
                                 scanner.next();
                                 // ident
-                                navData.setIdent(scanner.next());
+                                navDataPoint.setIdent(scanner.next());
                                 // ICAO code
                                 {
                                 StringBuilder builder = new StringBuilder();
@@ -111,87 +107,17 @@ public class RadioDataManager {
                                 // name
                                 builder.append(" ");
                                 builder.append(scanner.next());
-                                navData.setDescription(builder.toString());
+                                navDataPoint.setDescription(builder.toString());
                                 }
                                 break;
                         }
-                        return navData;
+                        return navDataPoint;
                     })
                     .collect(Collectors.toList());
-            navDataList = Collections.unmodifiableList(list);
+            navDataPointList = Collections.unmodifiableList(list);
 
         } catch (IOException e) {
             LOGGER.warn("loadRadioData()",e);
-        }
-    }
-    public static class NavData {
-        private Integer code;
-        private BigDecimal latitude;
-        private BigDecimal longitude;
-        private Integer elevationMSL;
-        private BigDecimal frequency;
-        private String ident;
-        private String description;
-
-        public Integer getCode() {
-            return code;
-        }
-
-        public void setCode(Integer code) {
-            this.code = code;
-        }
-
-        public BigDecimal getLatitude() {
-            return latitude;
-        }
-
-        public void setLatitude(BigDecimal latitude) {
-            this.latitude = latitude;
-        }
-
-        public BigDecimal getLongitude() {
-            return longitude;
-        }
-
-        public void setLongitude(BigDecimal longitude) {
-            this.longitude = longitude;
-        }
-
-        public Integer getElevationMSL() {
-            return elevationMSL;
-        }
-
-        public void setElevationMSL(Integer elevationMSL) {
-            this.elevationMSL = elevationMSL;
-        }
-
-        public BigDecimal getFrequency() {
-            return frequency;
-        }
-
-        public void setFrequency(BigDecimal frequency) {
-            this.frequency = frequency;
-        }
-
-        public String getIdent() {
-            return ident;
-        }
-
-        public void setIdent(String ident) {
-            this.ident = ident;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        @Override
-        public String toString() {
-            return ToStringBuilder.reflectionToString(this);
         }
     }
 }

@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 public class MainPushButtonPanel extends JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainPushButtonPanel.class);
     private XPlaneConnectService xPlaneConnectService;
-    private RadioDataManager.NavData navData;
+    private NavDataPoint navDataPoint;
     private final JButton sendNav1Button;
     private final JButton sendNav2Button;
     private final JButton testButton;
@@ -40,14 +40,14 @@ public class MainPushButtonPanel extends JPanel {
         setVisible(true);
     }
 
-    public void setNavData(RadioDataManager.NavData inNavData) {
-        if(null != inNavData) {
-            this.navData = inNavData;
+    public void setNavDataPoint(NavDataPoint inNavDataPoint) {
+        if(null != inNavDataPoint) {
+            this.navDataPoint = inNavDataPoint;
             sendNav1Button.setEnabled(true);
             sendNav2Button.setEnabled(true);
             testButton.setEnabled(true);
         } else {
-            this.navData = null;
+            this.navDataPoint = null;
             sendNav1Button.setEnabled(false);
             sendNav2Button.setEnabled(false);
             testButton.setEnabled(false);
@@ -55,14 +55,14 @@ public class MainPushButtonPanel extends JPanel {
     }
     private void actionListener(ActionEvent actionEvent) {
         LOGGER.info("actionListener()");
-        LOGGER.info(navData.toString());
+        LOGGER.info(navDataPoint.toString());
         if(actionEvent.getSource() == sendNav1Button) {
             LOGGER.info("actionListener() : nav 1");
-            xPlaneConnectService.sendDREF("sim/cockpit/radios/nav1_freq_hz",navData.getFrequency().multiply(new BigDecimal("100")).setScale(0).floatValue());
+            xPlaneConnectService.sendDREF("sim/cockpit/radios/nav1_freq_hz", navDataPoint.getFrequency().multiply(new BigDecimal("100")).setScale(0).floatValue());
         }
         if(actionEvent.getSource() == sendNav2Button) {
             LOGGER.info("actionListener() : nav 2");
-            xPlaneConnectService.sendDREF("sim/cockpit/radios/nav2_freq_hz",navData.getFrequency().multiply(new BigDecimal("100")).setScale(0).floatValue());
+            xPlaneConnectService.sendDREF("sim/cockpit/radios/nav2_freq_hz", navDataPoint.getFrequency().multiply(new BigDecimal("100")).setScale(0).floatValue());
         }
         if(actionEvent.getSource() == testButton) {
             LOGGER.info("actionListener() : test");

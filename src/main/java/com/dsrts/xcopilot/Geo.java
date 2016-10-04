@@ -4,8 +4,8 @@ import static java.lang.Math.*;
 
 public class Geo {
     public Double distanceM(GeoPoint point1, GeoPoint point2) {
-        Double theta = point1.getLongitude() - point2.getLongitude();
-        Double distance = sin(deg2rad(point1.getLatitude())) * sin(deg2rad(point2.getLatitude())) + cos(deg2rad(point1.getLatitude())) * cos(deg2rad(point2.getLatitude())) * cos(deg2rad(theta));
+        Double theta = point1.getLongitudeDouble() - point2.getLongitudeDouble();
+        Double distance = sin(deg2rad(point1.getLatitudeDouble())) * sin(deg2rad(point2.getLatitudeDouble())) + cos(deg2rad(point1.getLatitudeDouble())) * cos(deg2rad(point2.getLatitudeDouble())) * cos(deg2rad(theta));
         distance = acos(distance);
         distance = rad2deg(distance);
         distance = distance * 60 * 1.1515;
