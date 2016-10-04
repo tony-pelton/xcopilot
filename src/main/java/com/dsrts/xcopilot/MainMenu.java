@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 @Controller
 public class MainMenu extends JMenuBar {
@@ -15,6 +16,8 @@ public class MainMenu extends JMenuBar {
 
     private final Kernel kernel;
     private final SettingsManager settingsManager;
+
+    JFileChooser jFileChooser;
 
     private final JMenu fileMenu;
     private final JMenuItem fileMenuOpen;
@@ -25,6 +28,8 @@ public class MainMenu extends JMenuBar {
     public MainMenu(Kernel kernel,SettingsManager settingsManager) {
         this.kernel = kernel;
         this.settingsManager = settingsManager;
+        this.jFileChooser = new JFileChooser();
+        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileMenu = new JMenu("File");
         fileMenuOpen = new JMenuItem("Exit");
         fileMenuOpen.addActionListener(this::exitListener);
@@ -40,6 +45,17 @@ public class MainMenu extends JMenuBar {
         kernel.shutdown();
     }
     private void settingsHomeListener(ActionEvent actionEvent) {
-        settingsManager.decideXPlaneHome(this);
+        int returnVal = jFileChooser.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            File home = jFileChooser.getSelectedFile();
+            LOGGER.info("settingsHomeListener()",home.toString());
+            File fileResourcesDirectory = new File(home,"Resources");
+            if(fileResourcesDirectory.isDirectory()) {
+                LOGGER.info("settingsHomeListener()", fileResourcesDirectory.isDirectory());
+                settingsManager.setProperty(SettingsManager.KEY_XPLANE_HOME, home.getAbsolutePath());
+            } else {
+                LOGGER.warn("decideXPlaneHome() : not x-plane home");
+            }
+        }
     }
 }

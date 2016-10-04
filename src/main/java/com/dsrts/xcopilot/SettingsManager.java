@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 import java.util.Date;
 import java.util.Properties;
@@ -21,22 +19,9 @@ public class SettingsManager {
     private Properties properties = new Properties();
     private static File fileProperties = new File(System.getProperty("user.home")+System.getProperty("file.separator")+"xcopilot.properties");
 
-    public void decideXPlaneHome(Component parent) {
-        JFileChooser jFileChooser = new JFileChooser();
-        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int returnVal = jFileChooser.showOpenDialog(parent);
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            File home = jFileChooser.getSelectedFile();
-            LOGGER.info("decideXPlaneHome() : choice {}",home.toString());
-            File fileResourcesDirectory = new File(home,"Resources");
-            if(fileResourcesDirectory.isDirectory()) {
-                LOGGER.info("decideXPlaneHome() : isDirectory {}", fileResourcesDirectory.isDirectory());
-                properties.setProperty(KEY_XPLANE_HOME, home.getAbsolutePath());
-                persistProperties();
-            } else {
-                LOGGER.warn("decideXPlaneHome() : not x-plane home");
-            }
-        }
+    public void setProperty(String key,String value) {
+        properties.setProperty(key,value);
+        persistProperties();
     }
     public String getProperty(String key) {
         return properties.getProperty(key);
