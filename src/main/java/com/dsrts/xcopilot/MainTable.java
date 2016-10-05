@@ -22,7 +22,6 @@ public class MainTable extends JTable {
     public MainTable(RadioDataManager radioDataManager) {
         this.radioDataManager = radioDataManager;
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        getSelectionModel().addListSelectionListener(this::selectionListener);
         radioDataManager.addNavDataLoadListener(this::dataLoadListener);
         loadTable();
         setVisible(true);
@@ -49,10 +48,14 @@ public class MainTable extends JTable {
         SwingUtilities.invokeLater(this::loadTable);
     }
     private void loadTable() {
-        clearSelection();
+        // not sure if this is right ? had trouble with selection listener
+        // firing events when model was loading, getting index out of bounds exceptions
+        setSelectionModel(new DefaultListSelectionModel());
         this.setModel(new MainTableModel(radioDataManager.getDistanceFilteredNavDataList()));
+        getSelectionModel().addListSelectionListener(this::selectionListener);
         selectListenerConsumers.forEach(c -> c.accept(null));
     }
+
     public static class MainTableModel extends AbstractTableModel {
         private String[] columnNames = {"Code","Lat","Lon","MSL","Hz","Ident","Desc"};
         private List<NavDataPoint> navDataPointList;
