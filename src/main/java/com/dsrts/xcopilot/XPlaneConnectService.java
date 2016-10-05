@@ -3,6 +3,8 @@ package com.dsrts.xcopilot;
 import gov.nasa.xpc.XPlaneConnect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ import java.io.IOException;
 import java.net.SocketException;
 
 @Service
+@ManagedResource
 public class XPlaneConnectService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XPlaneConnectService.class);
@@ -29,16 +32,28 @@ public class XPlaneConnectService {
         this.planePosition = planePositionKsts;
     }
 
-    public void test() {
-        if(planePositionKsts == planePosition) {
-            planePosition = planePositionNonsense;
-        } else {
-            planePosition = planePositionKsts;
-        }
-    }
-
     public GeoPoint getPlanePosition() {
         return planePosition;
+    }
+
+    @ManagedAttribute
+    public int getPlanePositionTest() {
+        if(planePosition == planePositionKsts) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+    @ManagedAttribute
+    public void setPlanePositionTest(int pos) {
+        switch (pos) {
+            case 1:
+                planePosition = planePositionKsts;
+                break;
+            case 2:
+                planePosition = planePositionNonsense;
+                break;
+        }
     }
 
     public void sendDREF(String dref,float value) {

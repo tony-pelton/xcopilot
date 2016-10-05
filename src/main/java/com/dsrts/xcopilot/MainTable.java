@@ -2,28 +2,28 @@ package com.dsrts.xcopilot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 @Controller
 public class MainTable extends JTable {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MainTable.class);
-    private RadioDataManager radioDataManager;
-    private List<Consumer<NavDataPoint>> selectListenerConsumers = new ArrayList();
-    @Autowired
-    public MainTable(RadioDataManager radioDataManager) {
-        this.radioDataManager = radioDataManager;
+
+    private final ApplicationEventPublisher applicationEventPublisher;
+
+    private List<NavDataPoint> navDataPoints = new ArrayList<>();
+
+    public MainTable(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        radioDataManager.addNavDataLoadListener(this::dataLoadListener);
-        loadTable();
         setVisible(true);
     }
     private void selectionListener(ListSelectionEvent listSelectionEvent) {
@@ -37,23 +37,36 @@ public class MainTable extends JTable {
             listSelectionEvent.getLastIndex();
             NavDataPoint navDataPointAt = ((MainTableModel) getModel()).getNavDataAt(listSelectionEvent.getLastIndex());
             LOGGER.info( (navDataPointAt.toString()));
-            selectListenerConsumers.forEach( c -> c.accept(navDataPointAt));
+            applicationEventPublisher.publishEvent(new NavDataPointSelectedEvent(navDataPointAt));
         }
     }
-    public void addSelectListner(Consumer<NavDataPoint> navDataConsumer) {
-        selectListenerConsumers.add(navDataConsumer);
-    }
-    private void dataLoadListener(ActionEvent actionEvent) {
+
+    @EventListener
+    private void dataLoadListener(RadioDataManager.DataLoadEvent dataLoadEvent) {
         LOGGER.info("dataLoadListener()");
+        navDataPoints = dataLoadEvent.getNavDataPoints();
         SwingUtilities.invokeLater(this::loadTable);
     }
+
     private void loadTable() {
         // not sure if this is right ? had trouble with selection listener
         // firing events when model was loading, getting index out of bounds exceptions
         setSelectionModel(new DefaultListSelectionModel());
-        this.setModel(new MainTableModel(radioDataManager.getDistanceFilteredNavDataList()));
+        this.setModel(new MainTableModel(navDataPoints));
         getSelectionModel().addListSelectionListener(this::selectionListener);
-        selectListenerConsumers.forEach(c -> c.accept(null));
+        applicationEventPublisher.publishEvent(new NavDataPointSelectedEvent(null));
+    }
+
+    public static class NavDataPointSelectedEvent {
+        private NavDataPoint navDataPoint;
+
+        public NavDataPointSelectedEvent(NavDataPoint navDataPoint) {
+            this.navDataPoint = navDataPoint;
+        }
+
+        public NavDataPoint getNavDataPoint() {
+            return navDataPoint;
+        }
     }
 
     public static class MainTableModel extends AbstractTableModel {

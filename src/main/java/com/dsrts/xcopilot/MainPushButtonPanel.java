@@ -2,6 +2,7 @@ package com.dsrts.xcopilot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
 
 import javax.swing.*;
@@ -16,7 +17,6 @@ public class MainPushButtonPanel extends JPanel {
     private NavDataPoint navDataPoint;
     private final JButton sendNav1Button;
     private final JButton sendNav2Button;
-    private final JButton testButton;
 
     public MainPushButtonPanel(XPlaneConnectService xPlaneConnectService) {
         this.xPlaneConnectService = xPlaneConnectService;
@@ -32,25 +32,20 @@ public class MainPushButtonPanel extends JPanel {
         sendNav2Button.setEnabled(false);
         add(sendNav2Button);
 
-        testButton = new JButton("test");
-        testButton.addActionListener(this::actionListener);
-        testButton.setEnabled(false);
-        add(testButton);
-
         setVisible(true);
     }
 
-    public void setNavDataPoint(NavDataPoint inNavDataPoint) {
+    @EventListener
+    public void setNavDataPoint(MainTable.NavDataPointSelectedEvent navDataPointSelectedEvent) {
+        NavDataPoint inNavDataPoint = navDataPointSelectedEvent.getNavDataPoint();
         if(null != inNavDataPoint) {
             this.navDataPoint = inNavDataPoint;
             sendNav1Button.setEnabled(true);
             sendNav2Button.setEnabled(true);
-            testButton.setEnabled(true);
         } else {
             this.navDataPoint = null;
             sendNav1Button.setEnabled(false);
             sendNav2Button.setEnabled(false);
-            testButton.setEnabled(false);
         }
     }
     private void actionListener(ActionEvent actionEvent) {
@@ -63,10 +58,6 @@ public class MainPushButtonPanel extends JPanel {
         if(actionEvent.getSource() == sendNav2Button) {
             LOGGER.info("actionListener() : nav 2");
             xPlaneConnectService.sendDREF("sim/cockpit/radios/nav2_freq_hz", navDataPoint.getFrequency().multiply(new BigDecimal("100")).setScale(0).floatValue());
-        }
-        if(actionEvent.getSource() == testButton) {
-            LOGGER.info("actionListener() : test");
-            xPlaneConnectService.test();
         }
     }
 }

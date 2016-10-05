@@ -18,7 +18,6 @@ public class Main extends JFrame implements WindowListener {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(this);
         setJMenuBar(mainMenu);
-        mainTable.addSelectListner(mainPushButtonPanel::setNavDataPoint);
         getContentPane().add(mainPushButtonPanel,BorderLayout.PAGE_START);
         getContentPane().add(new JScrollPane(mainTable), BorderLayout.CENTER);
     }

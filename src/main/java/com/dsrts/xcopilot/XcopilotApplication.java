@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
@@ -51,8 +53,9 @@ public class XcopilotApplication {
     }
 
     @Bean
-    public EventBus eventBus(ThreadPoolTaskScheduler taskScheduler) {
-        AsyncEventBus asyncEventBus = new AsyncEventBus(taskScheduler.getScheduledExecutor());
-        return asyncEventBus;
+    public ApplicationEventMulticaster applicationEventMulticaster(ThreadPoolTaskScheduler taskScheduler) {
+        SimpleApplicationEventMulticaster simpleApplicationEventMulticaster = new SimpleApplicationEventMulticaster();
+        simpleApplicationEventMulticaster.setTaskExecutor(taskScheduler.getScheduledExecutor());
+        return simpleApplicationEventMulticaster;
     }
 }
