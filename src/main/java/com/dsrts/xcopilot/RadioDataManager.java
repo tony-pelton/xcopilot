@@ -44,8 +44,7 @@ public class RadioDataManager {
         synchronized (navDataPointList) {
             if(navDataPointList.size() < 1) {
                 // load data list
-                RadioDataLoader radioDataLoader = new RadioDataLoader();
-                navDataPointList = Collections.unmodifiableList(radioDataLoader.loadRadioData(settingsManager));
+                navDataPointList = Collections.unmodifiableList(new RadioDataLoader().loadRadioData(settingsManager));
             }
         }
         if(null == planePosition || planePosition.distanceToNM(xPlaneConnectService.getPlanePosition()) > 10.0) {
