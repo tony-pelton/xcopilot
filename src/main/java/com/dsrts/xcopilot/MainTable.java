@@ -62,19 +62,6 @@ public class MainTable extends JTable {
         setSelectionModel(new DefaultListSelectionModel());
         this.setModel(new MainTableModel(navDataPoints));
         getSelectionModel().addListSelectionListener(this::selectionListener);
-        applicationEventPublisher.publishEvent(new NavDataPointSelectedEvent(null));
-    }
-
-    public static class NavDataPointSelectedEvent {
-        private NavDataPoint navDataPoint;
-
-        public NavDataPointSelectedEvent(NavDataPoint navDataPoint) {
-            this.navDataPoint = navDataPoint;
-        }
-
-        public NavDataPoint getNavDataPoint() {
-            return navDataPoint;
-        }
     }
 
     public static class MainTableModel extends AbstractTableModel {

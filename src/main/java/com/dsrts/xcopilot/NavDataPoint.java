@@ -31,6 +31,10 @@ public class NavDataPoint extends GeoPoint {
         return frequency;
     }
 
+    public float getFrequencyForDREF() {
+        return getFrequency().multiply(new BigDecimal("100")).setScale(0).floatValue();
+    }
+
     public void setFrequency(BigDecimal frequency) {
         this.frequency = frequency;
     }
