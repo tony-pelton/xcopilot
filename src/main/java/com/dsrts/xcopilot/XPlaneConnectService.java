@@ -3,6 +3,7 @@ package com.dsrts.xcopilot;
 import gov.nasa.xpc.XPlaneConnect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -56,7 +57,13 @@ public class XPlaneConnectService {
         }
     }
 
-    public void sendDREF(String dref,float value) {
+    @EventListener
+    private void sendDREF(XPlaneConnectSendEvent event) {
+        LOGGER.info("sendDREF(event) : "+event.toString());
+        sendDREF(event.getDref(),event.getFvalue());
+    }
+
+    private void sendDREF(String dref,float value) {
         try {
             synchronized (xPlaneConnect) {
                 xPlaneConnect.sendDREF(dref,value);
