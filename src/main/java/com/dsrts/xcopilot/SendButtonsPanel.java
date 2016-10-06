@@ -38,8 +38,9 @@ public class SendButtonsPanel extends JPanel {
         add(sendNav2Button);
 
     }
-    @EventListener
-    private void setNavDataPoint(NavDataPointSelectedEvent navDataPointSelectedEvent) {
+    @EventListener(condition = "#navDataPointSelectedEvent.dref == null")
+    private void navDataPointSelectedEvent(NavDataPointSelectedEvent navDataPointSelectedEvent) {
+        LOGGER.info(navDataPointSelectedEvent.toString());
         NavDataPoint inNavDataPoint = navDataPointSelectedEvent.getNavDataPoint();
         this.navDataPoint = inNavDataPoint;
         sendNav1Button.setEnabled(true);
@@ -54,12 +55,24 @@ public class SendButtonsPanel extends JPanel {
                             navDataPoint.getFrequencyForDREF()
                     )
             );
+            publisher.publishEvent(
+                    new NavDataPointSelectedEvent(
+                            XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
+                            navDataPoint
+                    )
+            );
         }
         if(actionEvent.getSource() == sendNav2Button) {
             publisher.publishEvent(
                     new XPlaneConnectSendEvent(
                             XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
                             navDataPoint.getFrequencyForDREF()
+                    )
+            );
+            publisher.publishEvent(
+                    new NavDataPointSelectedEvent(
+                            XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
+                            navDataPoint
                     )
             );
         }

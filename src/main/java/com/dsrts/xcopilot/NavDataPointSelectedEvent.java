@@ -4,11 +4,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class NavDataPointSelectedEvent {
     private NavDataPoint navDataPoint;
+    private XPlaneConnectSendEvent.DREF dref;
     public NavDataPointSelectedEvent(NavDataPoint navDataPoint) {
-        checkNotNull(navDataPoint);
-        this.navDataPoint = navDataPoint;
+        this.navDataPoint = checkNotNull(navDataPoint);
+    }
+    public NavDataPointSelectedEvent(XPlaneConnectSendEvent.DREF dref,NavDataPoint navDataPoint) {
+        this.navDataPoint = checkNotNull(navDataPoint);
+        this.dref = checkNotNull(dref);
     }
     public NavDataPoint getNavDataPoint() {
         return navDataPoint;
+    }
+
+    public XPlaneConnectSendEvent.DREF getDref() {
+        return dref;
     }
 }

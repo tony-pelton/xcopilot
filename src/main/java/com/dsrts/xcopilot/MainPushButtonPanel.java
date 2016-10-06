@@ -11,7 +11,6 @@ import java.awt.*;
 @Controller
 public class MainPushButtonPanel extends JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainPushButtonPanel.class);
-    private NavDataPoint navDataPoint;
 
     private JPanel nav1JPanel = new JPanel();
     private JLabel jLabelNav1 = new JLabel();
@@ -40,14 +39,17 @@ public class MainPushButtonPanel extends JPanel {
 
         setVisible(true);
     }
-
-    @EventListener
-    private void setNavDataPoint(NavDataPointSelectedEvent navDataPointSelectedEvent) {
+    @EventListener(condition = "#navDataPointSelectedEvent.dref != null")
+    private void navDataPointSelectedEvent(NavDataPointSelectedEvent navDataPointSelectedEvent) {
+        LOGGER.info(navDataPointSelectedEvent.toString());
         NavDataPoint inNavDataPoint = navDataPointSelectedEvent.getNavDataPoint();
-        if(null != inNavDataPoint) {
-            this.navDataPoint = inNavDataPoint;
-        } else {
-            this.navDataPoint = null;
+        switch (navDataPointSelectedEvent.getDref()) {
+            case SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ:
+                SwingUtilities.invokeLater(() -> jLabelNav1.setText(inNavDataPoint.getFrequency().toString()));
+                break;
+            case SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ:
+                SwingUtilities.invokeLater(() -> jLabelNav2.setText(inNavDataPoint.getFrequency().toString()));
+                break;
         }
     }
 }
