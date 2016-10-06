@@ -1,7 +1,5 @@
 package com.dsrts.xcopilot;
 
-import com.google.common.eventbus.AsyncEventBus;
-import com.google.common.eventbus.EventBus;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,6 +10,7 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.TaskUtils;
 
 import javax.swing.*;
 
@@ -56,6 +55,7 @@ public class XcopilotApplication {
     public ApplicationEventMulticaster applicationEventMulticaster(ThreadPoolTaskScheduler taskScheduler) {
         SimpleApplicationEventMulticaster simpleApplicationEventMulticaster = new SimpleApplicationEventMulticaster();
         simpleApplicationEventMulticaster.setTaskExecutor(taskScheduler.getScheduledExecutor());
+        simpleApplicationEventMulticaster.setErrorHandler(TaskUtils.LOG_AND_SUPPRESS_ERROR_HANDLER);
         return simpleApplicationEventMulticaster;
     }
 }

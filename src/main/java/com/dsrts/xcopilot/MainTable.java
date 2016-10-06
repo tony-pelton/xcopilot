@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
+import java.awt.*;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,12 @@ public class MainTable extends JTable {
     public MainTable(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setBorder(BorderFactory.createRaisedBevelBorder());
+        setBackground(Color.LIGHT_GRAY);
+        setCellSelectionEnabled(false);
+        setGridColor(Color.BLACK);
+        setRowSelectionAllowed(false);
+        setShowVerticalLines(false);
         setVisible(true);
     }
     private void selectionListener(ListSelectionEvent listSelectionEvent) {
@@ -70,7 +78,7 @@ public class MainTable extends JTable {
     }
 
     public static class MainTableModel extends AbstractTableModel {
-        private String[] columnNames = {"Code","Lat","Lon","MSL","Hz","Ident","Desc"};
+        private String[] columnNames = {"Description","Code","Hz","MSL","Lat/Lon"};
         private List<NavDataPoint> navDataPointList;
         public MainTableModel(List<NavDataPoint> navDataPointList) {
             this.navDataPointList = navDataPointList;
@@ -85,7 +93,7 @@ public class MainTable extends JTable {
 
         @Override
         public int getColumnCount() {
-            return 7;
+            return columnNames.length;
         }
 
         @Override
@@ -99,25 +107,21 @@ public class MainTable extends JTable {
             Object o = "";
             switch (columnIndex) {
                 case 0:
-                    o = navDataPoint.getCode();
+                    o = navDataPoint.getDescription();
                     break;
                 case 1:
-                    o = navDataPoint.getLatitude();
+                    o = navDataPoint.getIdent();
                     break;
                 case 2:
-                    o = navDataPoint.getLongitude();
+                    o = navDataPoint.getFrequency();
                     break;
                 case 3:
                     o = navDataPoint.getElevationMSL();
                     break;
                 case 4:
-                    o = navDataPoint.getFrequency();
-                    break;
-                case 5:
-                    o = navDataPoint.getIdent();
-                    break;
-                case 6:
-                    o = navDataPoint.getDescription();
+                    o = navDataPoint.getLatitude().setScale(4, RoundingMode.HALF_EVEN).toPlainString()
+                            + " / "
+                            + navDataPoint.getLongitude().setScale(4,RoundingMode.HALF_EVEN).toPlainString();
                     break;
             }
             return o;
