@@ -35,14 +35,7 @@ public class MainTable extends JTable {
         setVisible(true);
     }
     private void selectionListener(ListSelectionEvent listSelectionEvent) {
-        LOGGER.info("selectionListener()");
-        LOGGER.info(listSelectionEvent.getSource().toString());
-        LOGGER.info(""+listSelectionEvent.getFirstIndex());
-        LOGGER.info(""+listSelectionEvent.getLastIndex());
-        LOGGER.info(""+listSelectionEvent.getValueIsAdjusting());
         if(!listSelectionEvent.getValueIsAdjusting()) {
-            // pointer to row
-            listSelectionEvent.getLastIndex();
             NavDataPoint navDataPointAt = ((MainTableModel) getModel()).getNavDataAt(listSelectionEvent.getLastIndex());
             LOGGER.info( (navDataPointAt.toString()));
             applicationEventPublisher.publishEvent(new NavDataPointSelectedEvent(navDataPointAt));
