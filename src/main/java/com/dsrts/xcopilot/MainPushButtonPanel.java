@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import javax.swing.*;
 import java.awt.*;
 
+import static java.lang.String.format;
+
 @Controller
 public class MainPushButtonPanel extends JPanel {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainPushButtonPanel.class);
@@ -39,17 +41,24 @@ public class MainPushButtonPanel extends JPanel {
 
         setVisible(true);
     }
+
+    private static final String RADIO_LABEL = "Hz [%s] %s";
+
     @EventListener(condition = "#navDataPointSelectedEvent.dref != null")
     private void navDataPointSelectedEvent(NavDataPointSelectedEvent navDataPointSelectedEvent) {
         LOGGER.info(navDataPointSelectedEvent.toString());
         NavDataPoint inNavDataPoint = navDataPointSelectedEvent.getNavDataPoint();
+        JLabel theLabel;
         switch (navDataPointSelectedEvent.getDref()) {
             case SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ:
-                SwingUtilities.invokeLater(() -> jLabelNav1.setText(inNavDataPoint.getFrequency().toString()));
+                theLabel = jLabelNav1;
                 break;
             case SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ:
-                SwingUtilities.invokeLater(() -> jLabelNav2.setText(inNavDataPoint.getFrequency().toString()));
+                theLabel = jLabelNav2;
                 break;
+            default:
+                return;
         }
+        SwingUtilities.invokeLater(() -> theLabel.setText(format(RADIO_LABEL,inNavDataPoint.getFrequency().toString(),inNavDataPoint.getDescription())));
     }
 }
