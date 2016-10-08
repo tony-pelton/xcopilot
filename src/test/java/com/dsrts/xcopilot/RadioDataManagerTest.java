@@ -10,6 +10,6 @@ public class RadioDataManagerTest {
         String path = "C:\\Program Files (x86)\\Steam\\SteamApps\\common\\X-Plane 10\\Resources\\default data\\earth_nav.dat";
 //        RadioDataManager radioDataManager = new RadioDataManager();
 //        radioDataManager.setRadioDataFile(new File(path));
-//        radioDataManager.loadRadioData();
+//        radioDataManager.getRadioNavDataList();
     }
 }
