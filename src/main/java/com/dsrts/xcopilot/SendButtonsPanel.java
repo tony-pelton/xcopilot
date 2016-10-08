@@ -17,7 +17,7 @@ public class SendButtonsPanel extends JPanel {
 
     private ApplicationEventPublisher publisher;
 
-    private NavDataPoint navDataPoint;
+    private NavigationGeoPoint navigationGeoPoint;
     private final JButton sendNav1Button;
     private final JButton sendNav2Button;
 
@@ -41,24 +41,24 @@ public class SendButtonsPanel extends JPanel {
     @EventListener(condition = "#navDataPointSelectedEvent.dref == null")
     private void navDataPointSelectedEvent(NavDataPointSelectedEvent navDataPointSelectedEvent) {
         LOGGER.info(navDataPointSelectedEvent.toString());
-        NavDataPoint inNavDataPoint = navDataPointSelectedEvent.getNavDataPoint();
-        this.navDataPoint = inNavDataPoint;
+        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getNavigationGeoPoint();
+        this.navigationGeoPoint = inNavigationGeoPoint;
         sendNav1Button.setEnabled(true);
         sendNav2Button.setEnabled(true);
     }
     private void actionListener(ActionEvent actionEvent) {
-        LOGGER.info(navDataPoint.toString());
+        LOGGER.info(navigationGeoPoint.toString());
         if(actionEvent.getSource() == sendNav1Button) {
             publisher.publishEvent(
                     new XPlaneConnectSendEvent(
                             XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
-                            navDataPoint.getFrequencyForDREF()
+                            navigationGeoPoint.getFrequencyForDREF()
                     )
             );
             publisher.publishEvent(
                     new NavDataPointSelectedEvent(
                             XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
-                            navDataPoint
+                            navigationGeoPoint
                     )
             );
         }
@@ -66,13 +66,13 @@ public class SendButtonsPanel extends JPanel {
             publisher.publishEvent(
                     new XPlaneConnectSendEvent(
                             XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
-                            navDataPoint.getFrequencyForDREF()
+                            navigationGeoPoint.getFrequencyForDREF()
                     )
             );
             publisher.publishEvent(
                     new NavDataPointSelectedEvent(
                             XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
-                            navDataPoint
+                            navigationGeoPoint
                     )
             );
         }

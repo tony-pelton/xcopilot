@@ -49,19 +49,19 @@ public class RadioDataManager {
     }
 
     private void loadFilteredRadioData() {
-        List<NavDataPoint> distanceFilteredNavDataPointList = radioDataLoader.getRadioNavDataList().stream()
+        List<NavigationGeoPoint> distanceFilteredNavigationGeoPointList = radioDataLoader.getRadioNavDataList().stream()
                 .filter(n -> planePosition.distanceToNM(n) < 200.0)
                 .collect(Collectors.toList());
-        applicationEventPublisher.publishEvent(new DataLoadEvent(Collections.unmodifiableList(distanceFilteredNavDataPointList)));
+        applicationEventPublisher.publishEvent(new DataLoadEvent(Collections.unmodifiableList(distanceFilteredNavigationGeoPointList)));
     }
 
     public static class DataLoadEvent {
-        private List<NavDataPoint> navDataPoints;
-        public DataLoadEvent(List<NavDataPoint> navDataPoints) {
-            this.navDataPoints = navDataPoints;
+        private List<NavigationGeoPoint> navigationGeoPoints;
+        public DataLoadEvent(List<NavigationGeoPoint> navigationGeoPoints) {
+            this.navigationGeoPoints = navigationGeoPoints;
         }
-        public List<NavDataPoint> getNavDataPoints() {
-            return navDataPoints;
+        public List<NavigationGeoPoint> getNavigationGeoPoints() {
+            return navigationGeoPoints;
         }
     }
 }

@@ -21,7 +21,7 @@ public class MainTable extends JTable {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    private List<NavDataPoint> navDataPoints = new ArrayList<>();
+    private List<NavigationGeoPoint> navigationGeoPoints = new ArrayList<>();
 
     public MainTable(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
@@ -36,16 +36,16 @@ public class MainTable extends JTable {
     }
     private void selectionListener(ListSelectionEvent listSelectionEvent) {
         if(!listSelectionEvent.getValueIsAdjusting()) {
-            NavDataPoint navDataPointAt = ((MainTableModel) getModel()).getNavDataAt(listSelectionEvent.getLastIndex());
-            LOGGER.info( (navDataPointAt.toString()));
-            applicationEventPublisher.publishEvent(new NavDataPointSelectedEvent(navDataPointAt));
+            NavigationGeoPoint navigationGeoPointAt = ((MainTableModel) getModel()).getNavDataAt(listSelectionEvent.getLastIndex());
+            LOGGER.info( (navigationGeoPointAt.toString()));
+            applicationEventPublisher.publishEvent(new NavDataPointSelectedEvent(navigationGeoPointAt));
         }
     }
 
     @EventListener
     private void dataLoadListener(RadioDataManager.DataLoadEvent dataLoadEvent) {
         LOGGER.info("dataLoadListener()");
-        navDataPoints = dataLoadEvent.getNavDataPoints();
+        navigationGeoPoints = dataLoadEvent.getNavigationGeoPoints();
         SwingUtilities.invokeLater(this::loadTable);
     }
 
@@ -53,22 +53,22 @@ public class MainTable extends JTable {
         // not sure if this is right ? had trouble with selection listener
         // firing events when model was loading, getting index out of bounds exceptions
         setSelectionModel(new DefaultListSelectionModel());
-        this.setModel(new MainTableModel(navDataPoints));
+        this.setModel(new MainTableModel(navigationGeoPoints));
         getSelectionModel().addListSelectionListener(this::selectionListener);
     }
 
     public static class MainTableModel extends AbstractTableModel {
         private String[] columnNames = {"Description","Code","Hz","MSL","Lat/Lon"};
-        private List<NavDataPoint> navDataPointList;
-        public MainTableModel(List<NavDataPoint> navDataPointList) {
-            this.navDataPointList = navDataPointList;
+        private List<NavigationGeoPoint> navigationGeoPointList;
+        public MainTableModel(List<NavigationGeoPoint> navigationGeoPointList) {
+            this.navigationGeoPointList = navigationGeoPointList;
         }
-        public NavDataPoint getNavDataAt(int index) {
-            return navDataPointList.get(index);
+        public NavigationGeoPoint getNavDataAt(int index) {
+            return navigationGeoPointList.get(index);
         }
         @Override
         public int getRowCount() {
-            return navDataPointList.size();
+            return navigationGeoPointList.size();
         }
 
         @Override
@@ -83,25 +83,25 @@ public class MainTable extends JTable {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            NavDataPoint navDataPoint = navDataPointList.get(rowIndex);
+            NavigationGeoPoint navigationGeoPoint = navigationGeoPointList.get(rowIndex);
             Object o = "";
             switch (columnIndex) {
                 case 0:
-                    o = navDataPoint.getDescription();
+                    o = navigationGeoPoint.getDescription();
                     break;
                 case 1:
-                    o = navDataPoint.getIdent();
+                    o = navigationGeoPoint.getIdent();
                     break;
                 case 2:
-                    o = navDataPoint.getFrequency();
+                    o = navigationGeoPoint.getFrequency();
                     break;
                 case 3:
-                    o = navDataPoint.getElevationMSL();
+                    o = navigationGeoPoint.getElevationMSL();
                     break;
                 case 4:
-                    o = navDataPoint.getLatitude().setScale(4, RoundingMode.HALF_EVEN).toPlainString()
+                    o = navigationGeoPoint.getLatitude().setScale(4, RoundingMode.HALF_EVEN).toPlainString()
                             + " / "
-                            + navDataPoint.getLongitude().setScale(4,RoundingMode.HALF_EVEN).toPlainString();
+                            + navigationGeoPoint.getLongitude().setScale(4,RoundingMode.HALF_EVEN).toPlainString();
                     break;
             }
             return o;

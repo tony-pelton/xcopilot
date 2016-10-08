@@ -47,7 +47,7 @@ public class MainPushButtonPanel extends JPanel {
     @EventListener(condition = "#navDataPointSelectedEvent.dref != null")
     private void navDataPointSelectedEvent(NavDataPointSelectedEvent navDataPointSelectedEvent) {
         LOGGER.info(navDataPointSelectedEvent.toString());
-        NavDataPoint inNavDataPoint = navDataPointSelectedEvent.getNavDataPoint();
+        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getNavigationGeoPoint();
         JLabel theLabel;
         switch (navDataPointSelectedEvent.getDref()) {
             case SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ:
@@ -59,6 +59,6 @@ public class MainPushButtonPanel extends JPanel {
             default:
                 return;
         }
-        SwingUtilities.invokeLater(() -> theLabel.setText(format(RADIO_LABEL,inNavDataPoint.getFrequency().toString(),inNavDataPoint.getDescription())));
+        SwingUtilities.invokeLater(() -> theLabel.setText(format(RADIO_LABEL, inNavigationGeoPoint.getFrequency().toString(), inNavigationGeoPoint.getDescription())));
     }
 }

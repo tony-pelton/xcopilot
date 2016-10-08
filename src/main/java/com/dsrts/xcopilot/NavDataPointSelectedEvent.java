@@ -3,17 +3,17 @@ package com.dsrts.xcopilot;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class NavDataPointSelectedEvent {
-    private NavDataPoint navDataPoint;
+    private NavigationGeoPoint navigationGeoPoint;
     private XPlaneConnectSendEvent.DREF dref;
-    public NavDataPointSelectedEvent(NavDataPoint navDataPoint) {
-        this.navDataPoint = checkNotNull(navDataPoint);
+    public NavDataPointSelectedEvent(NavigationGeoPoint navigationGeoPoint) {
+        this.navigationGeoPoint = checkNotNull(navigationGeoPoint);
     }
-    public NavDataPointSelectedEvent(XPlaneConnectSendEvent.DREF dref,NavDataPoint navDataPoint) {
-        this.navDataPoint = checkNotNull(navDataPoint);
+    public NavDataPointSelectedEvent(XPlaneConnectSendEvent.DREF dref,NavigationGeoPoint navigationGeoPoint) {
+        this.navigationGeoPoint = checkNotNull(navigationGeoPoint);
         this.dref = checkNotNull(dref);
     }
-    public NavDataPoint getNavDataPoint() {
-        return navDataPoint;
+    public NavigationGeoPoint getNavigationGeoPoint() {
+        return navigationGeoPoint;
     }
 
     public XPlaneConnectSendEvent.DREF getDref() {

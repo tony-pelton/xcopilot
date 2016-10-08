@@ -4,7 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
 
-public class NavDataPoint extends GeoPoint {
+public class NavigationGeoPoint extends GeoPoint {
     private Integer code;
     private Integer elevationMSL;
     private BigDecimal frequency;
