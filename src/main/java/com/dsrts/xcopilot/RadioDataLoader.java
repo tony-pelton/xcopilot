@@ -17,10 +17,9 @@ public class RadioDataLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RadioDataLoader.class);
 
-    public List<NavDataPoint> loadRadioData(SettingsManager settingsManager) {
+    public List<NavDataPoint> loadRadioData(String home) {
         List<NavDataPoint> list = new ArrayList<>();
         try {
-            String home = settingsManager.getProperty(SettingsManager.KEY_XPLANE_HOME);
             if(null != home) {
                 File navDataFile;
                 navDataFile = new File(home, "Resources");

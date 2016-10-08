@@ -17,7 +17,7 @@ public class MainMenu extends JMenuBar {
     private final Kernel kernel;
     private final SettingsManager settingsManager;
 
-    JFileChooser jFileChooser;
+    private JFileChooser jFileChooser;
 
     private final JMenu fileMenu;
     private final JMenuItem fileMenuOpen;
@@ -25,9 +25,10 @@ public class MainMenu extends JMenuBar {
     private final JMenuItem settingsMenuHome;
 
     @Autowired
-    public MainMenu(Kernel kernel,SettingsManager settingsManager) {
+    public MainMenu(Kernel kernel, SettingsManager settingsManager) {
         this.kernel = kernel;
         this.settingsManager = settingsManager;
+
         this.jFileChooser = new JFileChooser();
         jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileMenu = new JMenu("File");
@@ -52,7 +53,7 @@ public class MainMenu extends JMenuBar {
             File fileResourcesDirectory = new File(home,"Resources");
             if(fileResourcesDirectory.isDirectory()) {
                 LOGGER.info("settingsHomeListener()", fileResourcesDirectory.isDirectory());
-                settingsManager.setProperty(SettingsManager.KEY_XPLANE_HOME, home.getAbsolutePath());
+                settingsManager.setProperty(SettingsManager.KEY_XPLANE_HOME,home.getAbsolutePath());
             } else {
                 LOGGER.warn("decideXPlaneHome() : not x-plane home");
             }

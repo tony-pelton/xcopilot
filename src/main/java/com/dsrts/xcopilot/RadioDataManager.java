@@ -3,17 +3,19 @@ package com.dsrts.xcopilot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.event.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Service
-public class RadioDataManager implements ApplicationEventPublisherAware {
+public class RadioDataManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RadioDataManager.class);
 
@@ -23,6 +25,8 @@ public class RadioDataManager implements ApplicationEventPublisherAware {
 
     List<NavDataPoint> navDataPointList = new ArrayList<>();
     List<NavDataPoint> distanceFilteredNavDataPointList = new ArrayList<>();
+
+    private String xplaneHome;
 
     private GeoPoint planePosition;
 
@@ -34,30 +38,35 @@ public class RadioDataManager implements ApplicationEventPublisherAware {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    @Override
-    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-        this.applicationEventPublisher = applicationEventPublisher;
+    @EventListener(condition = "T(com.dsrts.xcopilot.SettingsManager).KEY_XPLANE_HOME.equals(#settingsManagerPropertyEvent.key)")
+    protected void propertyListener(SettingsManagerPropertyEvent settingsManagerPropertyEvent) {
+        xplaneHome = settingsManager.getProperty(SettingsManager.KEY_XPLANE_HOME);
+        synchronized (navDataPointList) {
+            distanceFilteredNavDataPointList.clear();
+            navDataPointList = new RadioDataLoader().loadRadioData(xplaneHome);
+            update();
+        }
     }
 
     @Scheduled(fixedRate = 10000)
     protected void update() {
         synchronized (navDataPointList) {
-            if(navDataPointList.size() < 1) {
-                // load data list
-                navDataPointList = Collections.unmodifiableList(new RadioDataLoader().loadRadioData(settingsManager));
+            if(null == planePosition) {
+                planePosition = checkNotNull(xPlaneConnectService.getPlanePosition());
             }
-        }
-        if(null == planePosition || planePosition.distanceToNM(xPlaneConnectService.getPlanePosition()) > 10.0) {
-            planePosition = checkNotNull(xPlaneConnectService.getPlanePosition());
-            loadFilteredRadioData();
+            if (navDataPointList.size() > 0) {
+                if(distanceFilteredNavDataPointList.size() < 1 || planePosition.distanceToNM(xPlaneConnectService.getPlanePosition()) > 10.0) {
+                    loadFilteredRadioData();
+                }
+            }
         }
     }
 
     private void loadFilteredRadioData() {
-        distanceFilteredNavDataPointList = Collections.unmodifiableList(navDataPointList.stream()
+        distanceFilteredNavDataPointList = navDataPointList.stream()
                 .filter(n -> planePosition.distanceToNM(n) < 200.0)
-                .collect(Collectors.toList()));
-        applicationEventPublisher.publishEvent(new DataLoadEvent(distanceFilteredNavDataPointList));
+                .collect(Collectors.toList());
+        applicationEventPublisher.publishEvent(new DataLoadEvent(Collections.unmodifiableList(distanceFilteredNavDataPointList)));
     }
 
     public static class DataLoadEvent {
