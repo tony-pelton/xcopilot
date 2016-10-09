@@ -7,7 +7,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PreDestroy;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
@@ -72,10 +71,5 @@ public class SettingsManager implements ApplicationListener<ApplicationReadyEven
         } catch (IOException e) {
             LOGGER.warn("close()",e);
         }
-    }
-
-    @PreDestroy
-    public void close() {
-        persistProperties();
     }
 }

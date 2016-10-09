@@ -13,12 +13,19 @@ import java.awt.event.WindowListener;
 public class Main extends JFrame implements WindowListener {
     private final Kernel kernel;
     @Autowired
-    public Main(Kernel kernel,MainMenu mainMenu,MainTable mainTable,MainPushButtonPanel mainPushButtonPanel) {
+    public Main(Kernel kernel,MainMenu mainMenu,MainTable mainTable,MainPushButtonPanel mainPushButtonPanel,MainSelectedNavigationGeoPointPanel mainSelectedNavigationGeoPointPanel) {
         this.kernel = kernel;
+
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(this);
         setJMenuBar(mainMenu);
-        getContentPane().add(mainPushButtonPanel,BorderLayout.PAGE_START);
+
+        JPanel headPanel = new JPanel();
+        headPanel.setLayout(new BoxLayout(headPanel,BoxLayout.PAGE_AXIS));
+        headPanel.add(mainPushButtonPanel);
+        headPanel.add(mainSelectedNavigationGeoPointPanel);
+        getContentPane().add(headPanel,BorderLayout.PAGE_START);
+
         getContentPane().add(new JScrollPane(mainTable), BorderLayout.CENTER);
     }
 
