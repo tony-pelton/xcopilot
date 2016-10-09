@@ -40,8 +40,8 @@ public class SendButtonsPanel extends JPanel {
     }
     @EventListener(condition = "#navDataPointSelectedEvent.dref == null")
     private void navDataPointSelectedEvent(NavDataPointSelectedEvent navDataPointSelectedEvent) {
-        LOGGER.info(navDataPointSelectedEvent.toString());
         NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getNavigationGeoPoint();
+        LOGGER.debug(navDataPointSelectedEvent.toString());
         this.navigationGeoPoint = inNavigationGeoPoint;
         sendNav1Button.setEnabled(true);
         sendNav2Button.setEnabled(true);

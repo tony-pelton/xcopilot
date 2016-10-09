@@ -43,6 +43,7 @@ public class RadioDataManager {
         if (null != radioDataLoader) {
             if(null == planePosition || planePosition.distanceToNM(xPlaneConnectService.getPlanePosition()) > 10.0) {
                 planePosition = xPlaneConnectService.getPlanePosition();
+                LOGGER.info("update() : "+planePosition);
                 loadFilteredRadioData();
             }
         }

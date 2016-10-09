@@ -10,7 +10,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,27 +24,30 @@ public class MainTable extends JTable {
 
     public MainTable(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
-        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setBorder(BorderFactory.createRaisedBevelBorder());
         setBackground(Color.LIGHT_GRAY);
-        setCellSelectionEnabled(false);
         setGridColor(Color.BLACK);
-        setRowSelectionAllowed(false);
         setShowVerticalLines(false);
         setFont(new Font(Font.MONOSPACED,Font.BOLD,14));
+
+        setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setCellSelectionEnabled(false);
+        setColumnSelectionAllowed(false);
+        setRowSelectionAllowed(true);
+
         setVisible(true);
     }
     private void selectionListener(ListSelectionEvent listSelectionEvent) {
         if(!listSelectionEvent.getValueIsAdjusting()) {
-            NavigationGeoPoint navigationGeoPointAt = ((MainTableModel) getModel()).getNavDataAt(listSelectionEvent.getLastIndex());
-            LOGGER.info( (navigationGeoPointAt.toString()));
+            NavigationGeoPoint navigationGeoPointAt = ((MainTableModel) getModel()).getNavDataAt(getSelectedRow());
+            LOGGER.debug(navigationGeoPointAt.toString());
             applicationEventPublisher.publishEvent(new NavDataPointSelectedEvent(navigationGeoPointAt));
         }
     }
 
     @EventListener
     private void dataLoadListener(RadioDataManager.DataLoadEvent dataLoadEvent) {
-        LOGGER.info("dataLoadListener()");
+        LOGGER.debug("dataLoadListener()");
         navigationGeoPoints = dataLoadEvent.getNavigationGeoPoints();
         SwingUtilities.invokeLater(this::loadTable);
     }
@@ -67,6 +69,12 @@ public class MainTable extends JTable {
         public NavigationGeoPoint getNavDataAt(int index) {
             return navigationGeoPointList.get(index);
         }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return false;
+        }
+
         @Override
         public int getRowCount() {
             return navigationGeoPointList.size();

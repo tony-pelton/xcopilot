@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @ManagedResource
@@ -22,6 +23,7 @@ public class XPlaneConnectService {
     private XPlaneConnect xPlaneConnect;
 
     private GeoPoint planePosition;
+    private AtomicBoolean running = new AtomicBoolean();
 
     // ksts
     private GeoPoint planePositionKsts = new GeoPoint(38.51513f,-122.81252f);
@@ -79,17 +81,20 @@ public class XPlaneConnectService {
             float[] posi;
             synchronized (xPlaneConnect) {
                 posi = xPlaneConnect.getPOSI(0);
+                if(!running.getAndSet(true)) {
+                    LOGGER.info("scheduled() : x-plane is responding");
+                }
             }
             planePosition = new GeoPoint(posi[0],posi[1]);
-            LOGGER.info(planePosition.toString());
         } catch (IOException e) {
-            LOGGER.warn("scheduled() : IO Exception; x-plane running ?");
+            if(running.getAndSet(false)) {
+                LOGGER.info("scheduled() : x-plane is not responding");
+            }
         }
     }
 
     @PreDestroy
     private void destroy() throws Exception {
-        LOGGER.info("destroy()");
         xPlaneConnect.close();
     }
 }

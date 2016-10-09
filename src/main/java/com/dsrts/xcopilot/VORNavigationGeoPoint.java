@@ -51,6 +51,6 @@ public class VORNavigationGeoPoint extends NavigationGeoPoint {
 
     @Override
     public String getDescription() {
-        return format("%1$5s  /  %2$5s  /  %s",getId(),getFrequency(),getName());
+        return format("%1$5s  /  %2$5s  /  %3$s",getId(),getFrequency(),getName());
     }
 }

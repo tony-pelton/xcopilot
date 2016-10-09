@@ -77,7 +77,7 @@ public class RadioDataLoader {
                             case 4: {
                                 LOCNavigationGeoPoint navigationGeoPoint = new LOCNavigationGeoPoint();
                                 populateNavigationGeoPoint(scanner, code, navigationGeoPoint);
-                                navigationGeoPoint.setBearing(new BigDecimal(scanner.next()));
+                                navigationGeoPoint.setBearing(new BigDecimal(scanner.next()).intValue());
                                 navigationGeoPoint.setId(scanner.next());
                                 navigationGeoPoint.setCodeICAO(scanner.next());
                                 navigationGeoPoint.setRunway(scanner.next());

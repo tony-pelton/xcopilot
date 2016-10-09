@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import static java.lang.String.format;
 
 public class LOCNavigationGeoPoint extends NavigationGeoPoint {
-    private BigDecimal bearing;
+    private Integer bearing;
     private String id;
     private String codeICAO;
     private String runway;
@@ -18,7 +18,7 @@ public class LOCNavigationGeoPoint extends NavigationGeoPoint {
             Integer elevationMSL,
             BigDecimal frequency,
             Integer range,
-            BigDecimal bearing,
+            Integer bearing,
             String id,
             String codeICAO,
             String runway,
@@ -31,11 +31,11 @@ public class LOCNavigationGeoPoint extends NavigationGeoPoint {
         setName(name);
     }
 
-    public BigDecimal getBearing() {
+    public Integer getBearing() {
         return bearing;
     }
 
-    public void setBearing(BigDecimal bearing) {
+    public void setBearing(Integer bearing) {
         this.bearing = bearing;
     }
 
@@ -73,6 +73,6 @@ public class LOCNavigationGeoPoint extends NavigationGeoPoint {
 
     @Override
     public String getDescription() {
-        return format("%1$5s  /  %2$5s  /  %3$5s  /  %4$5s @ %5$s ",getCodeICAO(),getFrequency(),getId(),getRunway(),getBearing().toString());
+        return format("%1$5s  /  %2$5s  /  %3$5s  /  RWY %4$5s @ %5$5s  /  %6$s",getCodeICAO(),getFrequency(),getId(),getRunway(),getBearing().toString(),getName());
     }
 }
