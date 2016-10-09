@@ -4,20 +4,34 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
 
+import static java.lang.String.format;
+
 public class NavigationGeoPoint extends GeoPoint {
     private Integer code;
     private Integer elevationMSL;
     private BigDecimal frequency;
-    private String ident;
-    private String description;
+    private Integer range;
+
+    public NavigationGeoPoint() {}
+    public NavigationGeoPoint(
+            Integer code,
+            BigDecimal latitude,
+            BigDecimal longitude,
+            Integer elevationMSL,
+            BigDecimal frequency,
+            Integer range) {
+        super(latitude,longitude);
+        setCode(code);
+        setElevationMSL(elevationMSL);
+        setFrequency(frequency);
+        setRange(range);
+    }
 
     public Integer getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
-        this.code = code;
-    }
+    public void setCode(Integer code) { this.code = code; }
 
     public Integer getElevationMSL() {
         return elevationMSL;
@@ -39,20 +53,16 @@ public class NavigationGeoPoint extends GeoPoint {
         this.frequency = frequency;
     }
 
-    public String getIdent() {
-        return ident;
+    public Integer getRange() {
+        return range;
     }
 
-    public void setIdent(String ident) {
-        this.ident = ident;
+    public void setRange(Integer range) {
+        this.range = range;
     }
 
     public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+        return format("Hz [%s]",getFrequency().toString());
     }
 
     @Override

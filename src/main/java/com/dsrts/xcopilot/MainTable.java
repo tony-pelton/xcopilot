@@ -32,6 +32,7 @@ public class MainTable extends JTable {
         setGridColor(Color.BLACK);
         setRowSelectionAllowed(false);
         setShowVerticalLines(false);
+        setFont(new Font(Font.MONOSPACED,Font.BOLD,14));
         setVisible(true);
     }
     private void selectionListener(ListSelectionEvent listSelectionEvent) {
@@ -58,7 +59,7 @@ public class MainTable extends JTable {
     }
 
     public static class MainTableModel extends AbstractTableModel {
-        private String[] columnNames = {"Description","Code","Hz","MSL","Lat/Lon"};
+        private String[] columnNames = {"Description"};
         private List<NavigationGeoPoint> navigationGeoPointList;
         public MainTableModel(List<NavigationGeoPoint> navigationGeoPointList) {
             this.navigationGeoPointList = navigationGeoPointList;
@@ -84,24 +85,10 @@ public class MainTable extends JTable {
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             NavigationGeoPoint navigationGeoPoint = navigationGeoPointList.get(rowIndex);
-            Object o = "";
+            String o = "";
             switch (columnIndex) {
                 case 0:
                     o = navigationGeoPoint.getDescription();
-                    break;
-                case 1:
-                    o = navigationGeoPoint.getIdent();
-                    break;
-                case 2:
-                    o = navigationGeoPoint.getFrequency();
-                    break;
-                case 3:
-                    o = navigationGeoPoint.getElevationMSL();
-                    break;
-                case 4:
-                    o = navigationGeoPoint.getLatitude().setScale(4, RoundingMode.HALF_EVEN).toPlainString()
-                            + " / "
-                            + navigationGeoPoint.getLongitude().setScale(4,RoundingMode.HALF_EVEN).toPlainString();
                     break;
             }
             return o;

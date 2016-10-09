@@ -9,10 +9,14 @@ public class GeoPoint extends Geo {
     private BigDecimal longitude;
 
     public GeoPoint() {}
-
     public GeoPoint(float latitude,float longitude) {
         this.latitude = new BigDecimal(latitude);
         this.longitude = new BigDecimal(longitude);
+    }
+
+    public GeoPoint(BigDecimal latitude,BigDecimal longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public BigDecimal getLatitude() {

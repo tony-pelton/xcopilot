@@ -41,6 +41,22 @@ public class RadioDataLoader {
         }
         return navigationGeoPoints;
     }
+    private void populateNavigationGeoPoint(Scanner scanner,Integer code,NavigationGeoPoint navigationGeoPoint) {
+        navigationGeoPoint.setCode(code);
+        navigationGeoPoint.setLatitude(new BigDecimal(scanner.next()).setScale(8));
+        navigationGeoPoint.setLongitude(new BigDecimal(scanner.next()).setScale(8));
+        navigationGeoPoint.setElevationMSL(scanner.nextInt());
+        navigationGeoPoint.setFrequency(new BigDecimal(scanner.next()).divide(new BigDecimal("100")).setScale(2));
+        navigationGeoPoint.setRange(scanner.nextInt());
+    }
+    private String allTheRest(Scanner scanner) {
+        StringBuilder builder = new StringBuilder();
+        scanner.forEachRemaining(name -> {
+            builder.append(name);
+            builder.append(" ");
+        });
+        return builder.toString().trim();
+    }
     private void loadRadioNavDataList() {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(navDataFile));
@@ -48,50 +64,29 @@ public class RadioDataLoader {
                     .filter(s -> s.startsWith("3") || s.startsWith("4"))
                     .map(s -> {
                         Scanner scanner = new Scanner(s);
-                        NavigationGeoPoint navigationGeoPoint = new NavigationGeoPoint();
-                        navigationGeoPoint.setCode(scanner.nextInt());
-                        navigationGeoPoint.setLatitude(new BigDecimal(scanner.next()).setScale(8));
-                        navigationGeoPoint.setLongitude(new BigDecimal(scanner.next()).setScale(8));
-                        navigationGeoPoint.setElevationMSL(scanner.nextInt());
-                        navigationGeoPoint.setFrequency(new BigDecimal(scanner.next()).divide(new BigDecimal("100")).setScale(2));
-                        // max range
-                        scanner.next();
-                        switch (navigationGeoPoint.getCode()) {
-                            case 3:
-                                // slaved variation ?
-                                scanner.next();
-                                // ident
-                                navigationGeoPoint.setIdent(scanner.next());
-                                // name
-                            {
-                                StringBuilder builder = new StringBuilder();
-                                scanner.forEachRemaining(name -> {
-                                    builder.append(name);
-                                    builder.append(" ");
-                                });
-                                navigationGeoPoint.setDescription(builder.toString().trim());
+                        int code = scanner.nextInt();
+                        switch (code) {
+                            case 3: {
+                                VORNavigationGeoPoint navigationGeoPoint = new VORNavigationGeoPoint();
+                                populateNavigationGeoPoint(scanner, code, navigationGeoPoint);
+                                navigationGeoPoint.setSlavedVariation(new BigDecimal(scanner.next()));
+                                navigationGeoPoint.setId(scanner.next());
+                                navigationGeoPoint.setName(allTheRest(scanner));
+                                return navigationGeoPoint;
                             }
-                            break;
-                            case 4:
-                                // localiser bearing true degrees
-                                scanner.next();
-                                // ident
-                                navigationGeoPoint.setIdent(scanner.next());
-                                // ICAO code
-                            {
-                                StringBuilder builder = new StringBuilder();
-                                builder.append(scanner.next());
-                                // runway number
-                                builder.append(" RWY ");
-                                builder.append(scanner.next());
-                                // name
-                                builder.append(" ");
-                                builder.append(scanner.next());
-                                navigationGeoPoint.setDescription(builder.toString());
+                            case 4: {
+                                LOCNavigationGeoPoint navigationGeoPoint = new LOCNavigationGeoPoint();
+                                populateNavigationGeoPoint(scanner, code, navigationGeoPoint);
+                                navigationGeoPoint.setBearing(new BigDecimal(scanner.next()));
+                                navigationGeoPoint.setId(scanner.next());
+                                navigationGeoPoint.setCodeICAO(scanner.next());
+                                navigationGeoPoint.setRunway(scanner.next());
+                                navigationGeoPoint.setName(allTheRest(scanner));
+                                return navigationGeoPoint;
                             }
-                            break;
+                            default:
+                                return new NavigationGeoPoint();
                         }
-                        return navigationGeoPoint;
                     })
                     .collect(Collectors.toList()));
         } catch (IOException e) {
