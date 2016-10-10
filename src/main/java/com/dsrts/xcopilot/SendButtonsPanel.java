@@ -51,13 +51,22 @@ public class SendButtonsPanel extends JPanel {
         if(actionEvent.getSource() == sendNav1Button) {
             publisher.publishEvent(
                     new XPlaneConnectSendEvent(
-                            XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
+                            DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
                             navigationGeoPoint.getFrequencyForDREF()
                     )
             );
+            // ils
+            if(navigationGeoPoint.getCode().equals(4)) {
+                publisher.publishEvent(
+                        new XPlaneConnectSendEvent(
+                                DREF.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGT,
+                                ((LOCNavigationGeoPoint)navigationGeoPoint).getBearing()
+                        )
+                );
+            }
             publisher.publishEvent(
                     new NavDataPointSelectedEvent(
-                            XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
+                            DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
                             navigationGeoPoint
                     )
             );
@@ -65,13 +74,22 @@ public class SendButtonsPanel extends JPanel {
         if(actionEvent.getSource() == sendNav2Button) {
             publisher.publishEvent(
                     new XPlaneConnectSendEvent(
-                            XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
+                            DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
                             navigationGeoPoint.getFrequencyForDREF()
                     )
             );
+            // ils
+            if(navigationGeoPoint.getCode().equals(4)) {
+                publisher.publishEvent(
+                        new XPlaneConnectSendEvent(
+                                DREF.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGT,
+                                ((LOCNavigationGeoPoint)navigationGeoPoint).getBearing()
+                        )
+                );
+            }
             publisher.publishEvent(
                     new NavDataPointSelectedEvent(
-                            XPlaneConnectSendEvent.DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
+                            DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
                             navigationGeoPoint
                     )
             );

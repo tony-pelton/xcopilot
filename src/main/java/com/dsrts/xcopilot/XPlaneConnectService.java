@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.lang.String.format;
+
 @Service
 @ManagedResource
 public class XPlaneConnectService {
@@ -75,17 +77,28 @@ public class XPlaneConnectService {
         }
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 10000)
     private void scheduled() {
         try {
-            float[] posi;
+            float[][] drefs_values;
             synchronized (xPlaneConnect) {
-                posi = xPlaneConnect.getPOSI(0);
+                String[] drefs = {
+                        DREF.SIM_FLIGHTMODEL_POSITION_LATITUDE.getDref(),
+                        DREF.SIM_FLIGHTMODEL_POSITION_LONGITUDE.getDref()
+                };
+                drefs_values = xPlaneConnect.getDREFs(drefs);
                 if(!running.getAndSet(true)) {
                     LOGGER.info("scheduled() : x-plane is responding");
                 }
+                if (LOGGER.isDebugEnabled()) {
+                    for(int y = 0;y < drefs_values.length;y++) {
+                        for(int x = 0; x < drefs_values[y].length;x++) {
+                            LOGGER.debug(format("dref [%s] [%d]",drefs[y],drefs_values[y][x]),String.valueOf(drefs_values[y][x]));
+                        }
+                    }
+                }
             }
-            planePosition = new GeoPoint(posi[0],posi[1]);
+            planePosition = new GeoPoint(drefs_values[0][0],drefs_values[1][0]);
         } catch (IOException e) {
             if(running.getAndSet(false)) {
                 LOGGER.info("scheduled() : x-plane is not responding");
