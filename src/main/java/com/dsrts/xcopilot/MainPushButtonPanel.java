@@ -21,6 +21,7 @@ public class MainPushButtonPanel extends JPanel {
     private JLabel jLabelNav2 = new JLabel();
 
     public MainPushButtonPanel(SendButtonsPanel sendButtonsPanel) {
+        setBorder(BorderFactory.createEtchedBorder());
         ((FlowLayout)getLayout()).setAlignment(FlowLayout.LEADING);
         add(sendButtonsPanel);
 
@@ -29,12 +30,14 @@ public class MainPushButtonPanel extends JPanel {
 
         jLabelNav1.setText("nav1");
         nav1JPanel.add(jLabelNav1);
+        ((FlowLayout)nav1JPanel.getLayout()).setAlignment(FlowLayout.LEADING);
         sentPanel.add(nav1JPanel);
 
         add(Box.createRigidArea(new Dimension(0,5)));
 
         jLabelNav2.setText("nav2");
         nav2JPanel.add(jLabelNav2);
+        ((FlowLayout)nav2JPanel.getLayout()).setAlignment(FlowLayout.LEADING);
         sentPanel.add(nav2JPanel);
 
         add(sentPanel);

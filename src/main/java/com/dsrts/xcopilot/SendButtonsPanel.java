@@ -25,14 +25,14 @@ public class SendButtonsPanel extends JPanel {
         this.publisher = publisher;
         setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
 
-        sendNav1Button = new JButton("Send NAV1");
+        sendNav1Button = new JButton("Set NAV1");
         sendNav1Button.addActionListener(this::actionListener);
         sendNav1Button.setEnabled(false);
         add(sendNav1Button);
 
         add(Box.createRigidArea(new Dimension(0,5)));
 
-        sendNav2Button = new JButton("Send NAV2");
+        sendNav2Button = new JButton("Set NAV2");
         sendNav2Button.addActionListener(this::actionListener);
         sendNav2Button.setEnabled(false);
         add(sendNav2Button);
