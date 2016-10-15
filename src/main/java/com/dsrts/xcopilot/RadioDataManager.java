@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.*;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -17,17 +16,14 @@ public class RadioDataManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RadioDataManager.class);
 
-    private XPlaneConnectService xPlaneConnectService;
     private SettingsManager settingsManager;
     private ApplicationEventPublisher applicationEventPublisher;
     private RadioDataLoader radioDataLoader;
 
     private GeoPoint planePosition;
 
-    public RadioDataManager(XPlaneConnectService xPlaneConnectService,
-                            SettingsManager settingsManager,
+    public RadioDataManager(SettingsManager settingsManager,
                             ApplicationEventPublisher applicationEventPublisher) {
-        this.xPlaneConnectService = xPlaneConnectService;
         this.settingsManager = settingsManager;
         this.applicationEventPublisher = applicationEventPublisher;
     }
@@ -35,14 +31,20 @@ public class RadioDataManager {
     @EventListener(condition = "T(com.dsrts.xcopilot.SettingsManager).KEY_XPLANE_HOME.equals(#settingsManagerPropertyEvent.key)")
     protected void propertyListener(SettingsManagerPropertyEvent settingsManagerPropertyEvent) {
         radioDataLoader = new RadioDataLoader(new File(settingsManager.<String>getProperty(SettingsManager.KEY_XPLANE_HOME)));
-        update();
+        update(new GeoPoint(38.51513f,-122.81252f));
     }
 
-    @Scheduled(fixedRate = 10000)
-    protected void update() {
+    @EventListener
+    protected void telemetryListener(XPlaneConnectReceiveEvent receiveEvent) {
+        update(new GeoPoint(
+                receiveEvent.getData(DREF.SIM_FLIGHTMODEL_POSITION_LATITUDE)[0],
+                receiveEvent.getData(DREF.SIM_FLIGHTMODEL_POSITION_LONGITUDE)[0]));
+    }
+
+    private void update(GeoPoint point) {
         if (null != radioDataLoader) {
-            if(null == planePosition || planePosition.distanceToNM(xPlaneConnectService.getPlanePosition()) > 10.0) {
-                planePosition = xPlaneConnectService.getPlanePosition();
+            if(null == planePosition || planePosition.distanceToNM(point) > 10.0) {
+                planePosition = point;
                 LOGGER.info("update() : "+planePosition);
                 loadFilteredRadioData();
             }
