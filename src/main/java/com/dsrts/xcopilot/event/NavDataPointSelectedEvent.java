@@ -1,4 +1,7 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.event;
+
+import com.dsrts.xcopilot.service.DREF;
+import com.dsrts.xcopilot.model.NavigationGeoPoint;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

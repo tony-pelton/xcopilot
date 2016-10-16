@@ -1,5 +1,7 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.ui;
 
+import com.dsrts.xcopilot.event.NavDataPointSelectedEvent;
+import com.dsrts.xcopilot.model.NavigationGeoPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;

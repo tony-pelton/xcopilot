@@ -1,5 +1,6 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.event;
 
+import com.dsrts.xcopilot.service.DREF;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class XPlaneConnectSendEvent {

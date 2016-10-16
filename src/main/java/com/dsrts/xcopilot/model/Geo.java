@@ -1,4 +1,4 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.model;
 
 import static java.lang.Math.*;
 

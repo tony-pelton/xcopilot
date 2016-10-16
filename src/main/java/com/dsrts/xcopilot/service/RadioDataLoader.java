@@ -1,5 +1,8 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.service;
 
+import com.dsrts.xcopilot.model.LOCNavigationGeoPoint;
+import com.dsrts.xcopilot.model.NavigationGeoPoint;
+import com.dsrts.xcopilot.model.VORNavigationGeoPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

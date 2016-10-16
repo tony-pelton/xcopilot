@@ -1,5 +1,6 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.model;
 
+import com.dsrts.xcopilot.model.GeoPoint;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;

@@ -1,5 +1,7 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.service;
 
+import com.dsrts.xcopilot.event.XPlaneConnectReceiveEvent;
+import com.dsrts.xcopilot.event.XPlaneConnectSendEvent;
 import gov.nasa.xpc.XPlaneConnect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

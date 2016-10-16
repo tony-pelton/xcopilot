@@ -1,4 +1,4 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 

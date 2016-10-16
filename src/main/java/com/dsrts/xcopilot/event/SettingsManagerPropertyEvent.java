@@ -1,4 +1,4 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.event;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

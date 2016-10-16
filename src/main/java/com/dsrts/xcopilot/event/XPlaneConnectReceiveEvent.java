@@ -1,4 +1,6 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.event;
+
+import com.dsrts.xcopilot.service.DREF;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +8,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class XPlaneConnectReceiveEvent {
-    enum Group {
+    public enum Group {
         TELEMETRY
     }
     private Group group;

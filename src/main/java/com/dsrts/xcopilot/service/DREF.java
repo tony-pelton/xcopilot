@@ -1,6 +1,6 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.service;
 
-enum DREF {
+public enum DREF {
     SIM_FLIGHTMODEL_POSITION_LATITUDE("sim/flightmodel/position/latitude"),
     SIM_FLIGHTMODEL_POSITION_LONGITUDE("sim/flightmodel/position/longitude"),
     SIM_FLIGHTMODEL_POSITION_MAGNETIC_VARIATION("sim/flightmodel/position/magnetic_variation"),
@@ -15,7 +15,7 @@ enum DREF {
         this.dref = dref;
     }
 
-    String getDref() {
+    public String getDref() {
         return dref;
     }
 }

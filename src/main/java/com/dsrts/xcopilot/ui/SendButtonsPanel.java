@@ -1,5 +1,10 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.ui;
 
+import com.dsrts.xcopilot.event.NavDataPointSelectedEvent;
+import com.dsrts.xcopilot.event.XPlaneConnectSendEvent;
+import com.dsrts.xcopilot.model.LOCNavigationGeoPoint;
+import com.dsrts.xcopilot.model.NavigationGeoPoint;
+import com.dsrts.xcopilot.service.DREF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;

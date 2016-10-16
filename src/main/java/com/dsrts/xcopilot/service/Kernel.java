@@ -1,5 +1,6 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.service;
 
+import com.dsrts.xcopilot.XcopilotApplication;
 import org.springframework.stereotype.Service;
 
 @Service

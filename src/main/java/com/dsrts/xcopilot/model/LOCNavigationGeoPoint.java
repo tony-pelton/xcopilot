@@ -1,4 +1,6 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.model;
+
+import com.dsrts.xcopilot.model.NavigationGeoPoint;
 
 import java.math.BigDecimal;
 

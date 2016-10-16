@@ -1,5 +1,7 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.ui;
 
+import com.dsrts.xcopilot.event.NavDataPointSelectedEvent;
+import com.dsrts.xcopilot.model.NavigationGeoPoint;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
 

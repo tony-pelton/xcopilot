@@ -1,5 +1,6 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.ui;
 
+import com.dsrts.xcopilot.service.Kernel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 

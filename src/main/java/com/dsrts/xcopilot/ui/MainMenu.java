@@ -1,5 +1,7 @@
-package com.dsrts.xcopilot;
+package com.dsrts.xcopilot.ui;
 
+import com.dsrts.xcopilot.service.Kernel;
+import com.dsrts.xcopilot.service.SettingsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
