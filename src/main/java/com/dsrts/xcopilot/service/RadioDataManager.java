@@ -1,7 +1,6 @@
 package com.dsrts.xcopilot.service;
 
-import com.dsrts.xcopilot.event.SettingsManagerPropertyEvent;
-import com.dsrts.xcopilot.event.XPlaneConnectReceiveEvent;
+import com.dsrts.xcopilot.event.XcopilotEvent;
 import com.dsrts.xcopilot.model.GeoPoint;
 import com.dsrts.xcopilot.model.NavigationGeoPoint;
 import org.slf4j.Logger;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,17 +32,17 @@ public class RadioDataManager {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    @EventListener(condition = "T(com.dsrts.xcopilot.service.SettingsManager).KEY_XPLANE_HOME.equals(#settingsManagerPropertyEvent.key)")
-    protected void propertyListener(SettingsManagerPropertyEvent settingsManagerPropertyEvent) {
-        radioDataLoader = new RadioDataLoader(new File(settingsManager.<String>getProperty(SettingsManager.KEY_XPLANE_HOME)));
+    @EventListener(condition = "#settingsManagerPropertyEvent.isEvent('publishproperty') && 'xplane.home'.equals(#settingsManagerPropertyEvent.getKey())")
+    protected void propertyListener(XcopilotEvent settingsManagerPropertyEvent) {
+        radioDataLoader = new RadioDataLoader(new File(settingsManagerPropertyEvent.<String>getValue()));
         update(new GeoPoint(38.51513f,-122.81252f));
     }
 
-    @EventListener
-    protected void telemetryListener(XPlaneConnectReceiveEvent receiveEvent) {
+    @EventListener(condition = "#receiveEvent.isEvent('telemetry')")
+    protected void telemetryListener(XcopilotEvent receiveEvent) {
         update(new GeoPoint(
-                receiveEvent.getData(DREF.SIM_FLIGHTMODEL_POSITION_LATITUDE)[0],
-                receiveEvent.getData(DREF.SIM_FLIGHTMODEL_POSITION_LONGITUDE)[0]));
+                receiveEvent.<Map<DREF,float[]>>getValue().get(DREF.SIM_FLIGHTMODEL_POSITION_LATITUDE)[0],
+                receiveEvent.<Map<DREF,float[]>>getValue().get(DREF.SIM_FLIGHTMODEL_POSITION_LONGITUDE)[0]));
     }
 
     private void update(GeoPoint point) {

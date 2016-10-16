@@ -28,9 +28,9 @@ public class MainSelectedNavigationGeoPointPanel extends JPanel {
 
         setVisible(true);
     }
-    @EventListener(condition = "#navDataPointSelectedEvent.getValue('selectednavpoint') != null")
+    @EventListener(condition = "#navDataPointSelectedEvent.isEvent('selectednavpoint')")
     private void navDataPointSelectedEvent(XcopilotEvent navDataPointSelectedEvent) {
-        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getValue("selectednavpoint");
+        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getValue();
         SwingUtilities.invokeLater(() -> {
             label.setText(format(RADIO_LABEL, inNavigationGeoPoint.getFrequency().toString(), inNavigationGeoPoint.getDescription()));
             button.setEnabled(true);

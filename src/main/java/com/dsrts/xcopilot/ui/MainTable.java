@@ -46,9 +46,7 @@ public class MainTable extends JTable {
             NavigationGeoPoint navigationGeoPointAt = ((MainTableModel) getModel()).getNavDataAt(getSelectedRow());
             LOGGER.debug(navigationGeoPointAt.toString());
             applicationEventPublisher.publishEvent(
-                    new XcopilotEvent(
-                            ImmutableMap.of("selectednavpoint",navigationGeoPointAt)
-                    )
+                new XcopilotEvent("selectednavpoint","navpoint",navigationGeoPointAt)
             );
         }
     }

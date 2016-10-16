@@ -1,6 +1,6 @@
 package com.dsrts.xcopilot.service;
 
-import com.dsrts.xcopilot.event.SettingsManagerPropertyEvent;
+import com.dsrts.xcopilot.event.XcopilotEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -38,22 +38,22 @@ public class SettingsManager implements ApplicationListener<ApplicationReadyEven
                 synchronized (properties) {
                     properties = (Map<String,Serializable>)xmlDecoder.readObject();
                 }
-                properties.keySet().forEach(s -> publishEvent(s));
+                properties.keySet().forEach(s -> publishEvent(s,properties.get(s)));
             } catch (IOException e) {
                 LOGGER.warn("init<>",e);
             }
         }
     }
 
-    private void publishEvent(String key) {
-        applicationEventPublisher.publishEvent(new SettingsManagerPropertyEvent(key));
+    private void publishEvent(String key,Object value) {
+        applicationEventPublisher.publishEvent(new XcopilotEvent("publishproperty",key,value));
     }
 
     public void setProperty(String key,Serializable value) {
         synchronized (properties) {
             properties.put(key,value);
             persistProperties();
-            publishEvent(key);
+            publishEvent(key,value);
         }
     }
 

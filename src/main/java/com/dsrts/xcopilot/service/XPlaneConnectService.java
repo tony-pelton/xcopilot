@@ -1,7 +1,7 @@
 package com.dsrts.xcopilot.service;
 
-import com.dsrts.xcopilot.event.XPlaneConnectReceiveEvent;
 import com.dsrts.xcopilot.event.XcopilotEvent;
+import com.google.common.collect.ImmutableMap;
 import gov.nasa.xpc.XPlaneConnect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,16 +32,16 @@ public class XPlaneConnectService {
         this.eventPublisher = eventPublisher;
     }
 
-    @EventListener(condition = "#event.getValue('senddref') != null")
+    @EventListener(condition = "#event.isEvent('senddref')")
     private void sendDREF(XcopilotEvent event) {
         LOGGER.info("sendDREF(event) : "+event.toString());
-        sendDREF(event.getValue("senddref"),event.getValue("value"));
+        sendDREF(event.getKey(),event.getValue());
     }
 
-    private void sendDREF(String dref,float value) {
+    private void sendDREF(DREF dref,float value) {
         try {
             synchronized (xPlaneConnect) {
-                xPlaneConnect.sendDREF(dref,value);
+                xPlaneConnect.sendDREF(dref.getDref(),value);
             }
         } catch (IOException e) {
             LOGGER.warn("sendDREF()",e);
@@ -64,7 +64,7 @@ public class XPlaneConnectService {
                 if(!running.getAndSet(true)) {
                     LOGGER.info("scheduled() : x-plane is responding");
                 }
-                eventPublisher.publishEvent(new XPlaneConnectReceiveEvent(XPlaneConnectReceiveEvent.Group.TELEMETRY,d_drefs,drefs_values));
+                eventPublisher.publishEvent(new XcopilotEvent("telemetry","data",ImmutableMap.of(d_drefs[0],drefs_values[0],d_drefs[1],drefs_values[1])));
                 if (LOGGER.isDebugEnabled()) {
                     for(int y = 0;y < drefs_values.length;y++) {
                         for(int x = 0; x < drefs_values[y].length;x++) {

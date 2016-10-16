@@ -50,12 +50,12 @@ public class MainPushButtonPanel extends JPanel {
 
     private static final String RADIO_LABEL = "Hz [%s] %s";
 
-    @EventListener(condition = "#navDataPointSelectedEvent.getValue('selectedradio') != null")
+    @EventListener(condition = "#navDataPointSelectedEvent.isEvent('selectedradio')")
     private void navDataPointSelectedEvent(XcopilotEvent navDataPointSelectedEvent) {
         LOGGER.info(navDataPointSelectedEvent.toString());
-        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getValue("value");
+        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getValue();
         JLabel theLabel;
-        switch (navDataPointSelectedEvent.<DREF>getValue("selectedradio")) {
+        switch (navDataPointSelectedEvent.<DREF>getKey()) {
             case SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ:
                 theLabel = jLabelNav1;
                 break;
