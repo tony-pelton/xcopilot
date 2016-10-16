@@ -1,6 +1,5 @@
 package com.dsrts.xcopilot.ui;
 
-import com.dsrts.xcopilot.event.NavDataPointSelectedEvent;
 import com.dsrts.xcopilot.event.XcopilotEvent;
 import com.dsrts.xcopilot.model.LOCNavigationGeoPoint;
 import com.dsrts.xcopilot.model.NavigationGeoPoint;
@@ -44,9 +43,9 @@ public class SendButtonsPanel extends JPanel {
         add(sendNav2Button);
 
     }
-    @EventListener(condition = "#navDataPointSelectedEvent.dref == null")
-    private void navDataPointSelectedEvent(NavDataPointSelectedEvent navDataPointSelectedEvent) {
-        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getNavigationGeoPoint();
+    @EventListener(condition = "#navDataPointSelectedEvent.getValue('selectednavpoint') != null")
+    private void navDataPointSelectedEvent(XcopilotEvent navDataPointSelectedEvent) {
+        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getValue("selectednavpoint");
         LOGGER.debug(navDataPointSelectedEvent.toString());
         this.navigationGeoPoint = inNavigationGeoPoint;
         sendNav1Button.setEnabled(true);
@@ -68,17 +67,20 @@ public class SendButtonsPanel extends JPanel {
                 publisher.publishEvent(
                         new XcopilotEvent(
                                 ImmutableMap.of(
-                                        "senddref",DREF.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGT.getDref(),
-                                        "value",((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()
+                                        "senddref", DREF.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGT.getDref(),
+                                        "value", ((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()
                                 )
                         )
                 );
             }
             publisher.publishEvent(
-                    new NavDataPointSelectedEvent(
-                            DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
-                            navigationGeoPoint
+                    new XcopilotEvent(
+                            ImmutableMap.of(
+                                    "selectedradio", DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
+                                    "value", navigationGeoPoint
+                            )
                     )
+
             );
         }
         if(actionEvent.getSource() == sendNav2Button) {
@@ -91,20 +93,22 @@ public class SendButtonsPanel extends JPanel {
                     )
             );
             // ils
-            if(navigationGeoPoint.getCode().equals(4)) {
+            if (navigationGeoPoint.getCode().equals(4)) {
                 publisher.publishEvent(
                         new XcopilotEvent(
                                 ImmutableMap.of(
-                                        "senddref",DREF.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGT.getDref(),
-                                        "value",((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()
+                                        "senddref", DREF.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGT.getDref(),
+                                        "value", ((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()
                                 )
                         )
                 );
             }
             publisher.publishEvent(
-                    new NavDataPointSelectedEvent(
-                            DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
-                            navigationGeoPoint
+                    new XcopilotEvent(
+                            ImmutableMap.of(
+                                    "selectedradio", DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
+                                    "value", navigationGeoPoint
+                            )
                     )
             );
         }

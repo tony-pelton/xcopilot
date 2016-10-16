@@ -1,7 +1,8 @@
 package com.dsrts.xcopilot.ui;
 
-import com.dsrts.xcopilot.event.NavDataPointSelectedEvent;
+import com.dsrts.xcopilot.event.XcopilotEvent;
 import com.dsrts.xcopilot.model.NavigationGeoPoint;
+import com.dsrts.xcopilot.service.DREF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -49,12 +50,12 @@ public class MainPushButtonPanel extends JPanel {
 
     private static final String RADIO_LABEL = "Hz [%s] %s";
 
-    @EventListener(condition = "#navDataPointSelectedEvent.dref != null")
-    private void navDataPointSelectedEvent(NavDataPointSelectedEvent navDataPointSelectedEvent) {
+    @EventListener(condition = "#navDataPointSelectedEvent.getValue('selectedradio') != null")
+    private void navDataPointSelectedEvent(XcopilotEvent navDataPointSelectedEvent) {
         LOGGER.info(navDataPointSelectedEvent.toString());
-        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getNavigationGeoPoint();
+        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getValue("value");
         JLabel theLabel;
-        switch (navDataPointSelectedEvent.getDref()) {
+        switch (navDataPointSelectedEvent.<DREF>getValue("selectedradio")) {
             case SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ:
                 theLabel = jLabelNav1;
                 break;

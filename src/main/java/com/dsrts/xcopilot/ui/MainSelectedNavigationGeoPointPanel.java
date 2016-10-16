@@ -1,6 +1,6 @@
 package com.dsrts.xcopilot.ui;
 
-import com.dsrts.xcopilot.event.NavDataPointSelectedEvent;
+import com.dsrts.xcopilot.event.XcopilotEvent;
 import com.dsrts.xcopilot.model.NavigationGeoPoint;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Controller;
@@ -28,9 +28,9 @@ public class MainSelectedNavigationGeoPointPanel extends JPanel {
 
         setVisible(true);
     }
-    @EventListener
-    private void navDataPointSelectedEvent(NavDataPointSelectedEvent navDataPointSelectedEvent) {
-        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getNavigationGeoPoint();
+    @EventListener(condition = "#navDataPointSelectedEvent.getValue('selectednavpoint') != null")
+    private void navDataPointSelectedEvent(XcopilotEvent navDataPointSelectedEvent) {
+        NavigationGeoPoint inNavigationGeoPoint = navDataPointSelectedEvent.getValue("selectednavpoint");
         SwingUtilities.invokeLater(() -> {
             label.setText(format(RADIO_LABEL, inNavigationGeoPoint.getFrequency().toString(), inNavigationGeoPoint.getDescription()));
             button.setEnabled(true);

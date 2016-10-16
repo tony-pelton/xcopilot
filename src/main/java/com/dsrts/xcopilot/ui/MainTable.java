@@ -1,8 +1,9 @@
 package com.dsrts.xcopilot.ui;
 
-import com.dsrts.xcopilot.event.NavDataPointSelectedEvent;
+import com.dsrts.xcopilot.event.XcopilotEvent;
 import com.dsrts.xcopilot.model.NavigationGeoPoint;
 import com.dsrts.xcopilot.service.RadioDataManager;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -44,7 +45,11 @@ public class MainTable extends JTable {
         if(!listSelectionEvent.getValueIsAdjusting()) {
             NavigationGeoPoint navigationGeoPointAt = ((MainTableModel) getModel()).getNavDataAt(getSelectedRow());
             LOGGER.debug(navigationGeoPointAt.toString());
-            applicationEventPublisher.publishEvent(new NavDataPointSelectedEvent(navigationGeoPointAt));
+            applicationEventPublisher.publishEvent(
+                    new XcopilotEvent(
+                            ImmutableMap.of("selectednavpoint",navigationGeoPointAt)
+                    )
+            );
         }
     }
 
