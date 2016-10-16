@@ -10,13 +10,13 @@ public class GeoPoint extends Geo {
 
     public GeoPoint() {}
     public GeoPoint(float latitude,float longitude) {
-        this.latitude = new BigDecimal(latitude);
-        this.longitude = new BigDecimal(longitude);
+        setLatitude(new BigDecimal(latitude));
+        setLongitude(new BigDecimal(longitude));
     }
 
     public GeoPoint(BigDecimal latitude,BigDecimal longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+        setLatitude(latitude);
+        setLongitude(longitude);
     }
 
     public BigDecimal getLatitude() {
@@ -24,7 +24,7 @@ public class GeoPoint extends Geo {
     }
 
     public void setLatitude(BigDecimal latitude) {
-        this.latitude = latitude;
+        this.latitude = latitude.setScale(8,BigDecimal.ROUND_HALF_EVEN);
     }
 
     public BigDecimal getLongitude() {
@@ -32,7 +32,7 @@ public class GeoPoint extends Geo {
     }
 
     public void setLongitude(BigDecimal longitude) {
-        this.longitude = longitude;
+        this.longitude = longitude.setScale(8,BigDecimal.ROUND_HALF_EVEN);
     }
 
     public Double getLatitudeDouble() {
