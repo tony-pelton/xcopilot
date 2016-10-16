@@ -1,7 +1,7 @@
 package com.dsrts.xcopilot.service;
 
 import com.dsrts.xcopilot.event.XPlaneConnectReceiveEvent;
-import com.dsrts.xcopilot.event.XPlaneConnectSendEvent;
+import com.dsrts.xcopilot.event.XcopilotEvent;
 import gov.nasa.xpc.XPlaneConnect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +32,10 @@ public class XPlaneConnectService {
         this.eventPublisher = eventPublisher;
     }
 
-    @EventListener
-    private void sendDREF(XPlaneConnectSendEvent event) {
+    @EventListener(condition = "#event.getValue('senddref') != null")
+    private void sendDREF(XcopilotEvent event) {
         LOGGER.info("sendDREF(event) : "+event.toString());
-        sendDREF(event.getDref(),event.getFvalue());
+        sendDREF(event.getValue("senddref"),event.getValue("value"));
     }
 
     private void sendDREF(String dref,float value) {

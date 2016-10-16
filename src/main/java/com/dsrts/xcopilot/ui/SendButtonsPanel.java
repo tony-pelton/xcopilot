@@ -1,10 +1,11 @@
 package com.dsrts.xcopilot.ui;
 
 import com.dsrts.xcopilot.event.NavDataPointSelectedEvent;
-import com.dsrts.xcopilot.event.XPlaneConnectSendEvent;
+import com.dsrts.xcopilot.event.XcopilotEvent;
 import com.dsrts.xcopilot.model.LOCNavigationGeoPoint;
 import com.dsrts.xcopilot.model.NavigationGeoPoint;
 import com.dsrts.xcopilot.service.DREF;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -55,17 +56,21 @@ public class SendButtonsPanel extends JPanel {
         LOGGER.info(navigationGeoPoint.toString());
         if(actionEvent.getSource() == sendNav1Button) {
             publisher.publishEvent(
-                    new XPlaneConnectSendEvent(
-                            DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,
-                            navigationGeoPoint.getFrequencyForDREF()
+                    new XcopilotEvent(
+                            ImmutableMap.of(
+                                    "senddref", DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ.getDref(),
+                                    "value", navigationGeoPoint.getFrequencyForDREF()
+                            )
                     )
             );
             // ils
             if(navigationGeoPoint.getCode().equals(4)) {
                 publisher.publishEvent(
-                        new XPlaneConnectSendEvent(
-                                DREF.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGT,
-                                ((LOCNavigationGeoPoint)navigationGeoPoint).getBearing()
+                        new XcopilotEvent(
+                                ImmutableMap.of(
+                                        "senddref",DREF.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGT.getDref(),
+                                        "value",((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()
+                                )
                         )
                 );
             }
@@ -78,17 +83,21 @@ public class SendButtonsPanel extends JPanel {
         }
         if(actionEvent.getSource() == sendNav2Button) {
             publisher.publishEvent(
-                    new XPlaneConnectSendEvent(
-                            DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,
-                            navigationGeoPoint.getFrequencyForDREF()
+                    new XcopilotEvent(
+                            ImmutableMap.of(
+                                    "senddref", DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ.getDref(),
+                                    "value", navigationGeoPoint.getFrequencyForDREF()
+                            )
                     )
             );
             // ils
             if(navigationGeoPoint.getCode().equals(4)) {
                 publisher.publishEvent(
-                        new XPlaneConnectSendEvent(
-                                DREF.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGT,
-                                ((LOCNavigationGeoPoint)navigationGeoPoint).getBearing()
+                        new XcopilotEvent(
+                                ImmutableMap.of(
+                                        "senddref",DREF.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGT.getDref(),
+                                        "value",((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()
+                                )
                         )
                 );
             }
