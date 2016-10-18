@@ -1,7 +1,5 @@
 package com.dsrts.xcopilot.model;
 
-import com.dsrts.xcopilot.model.NavigationGeoPoint;
-
 import java.math.BigDecimal;
 
 import static java.lang.String.format;
@@ -13,8 +11,8 @@ public class VORNavigationGeoPoint extends NavigationGeoPoint {
     public VORNavigationGeoPoint() {}
     public VORNavigationGeoPoint(
             Integer code,
-            BigDecimal latitude,
-            BigDecimal longitude,
+            Float latitude,
+            Float longitude,
             Integer elevationMSL,
             BigDecimal frequency,
             Integer range,

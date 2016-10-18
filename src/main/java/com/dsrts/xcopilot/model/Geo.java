@@ -1,28 +1,30 @@
 package com.dsrts.xcopilot.model;
 
+import java.io.Serializable;
+
 import static java.lang.Math.*;
 
-public class Geo {
-    public Double distanceM(GeoPoint point1, GeoPoint point2) {
-        Double theta = point1.getLongitudeDouble() - point2.getLongitudeDouble();
-        Double distance = sin(deg2rad(point1.getLatitudeDouble())) * sin(deg2rad(point2.getLatitudeDouble())) + cos(deg2rad(point1.getLatitudeDouble())) * cos(deg2rad(point2.getLatitudeDouble())) * cos(deg2rad(theta));
+public class Geo implements Serializable {
+    public float distanceM(GeoPoint point1, GeoPoint point2) {
+        float theta = point1.getLongitude() - point2.getLongitude();
+        double distance = sin(deg2rad(point1.getLatitude())) * sin(deg2rad(point2.getLatitude())) + cos(deg2rad(point1.getLatitude())) * cos(deg2rad(point2.getLatitude())) * cos(deg2rad(theta));
         distance = acos(distance);
         distance = rad2deg(distance);
         distance = distance * 60 * 1.1515;
-        return distance;
+        return new Float(distance);
     }
-    public Double distanceNM(GeoPoint point1, GeoPoint point2) {
-        return 0.8684 * distanceM(point1,point2);
+    public float distanceNM(GeoPoint point1, GeoPoint point2) {
+        return new Float(0.8684 * distanceM(point1,point2));
     }
-    public Double distanceKM(GeoPoint point1, GeoPoint point2) {
-        return 1.609344 * distanceM(point1,point2);
+    public float distanceKM(GeoPoint point1, GeoPoint point2) {
+        return new Float(1.609344 * distanceM(point1,point2));
     }
-    public static final Double DEG2RADHALFPI = PI / 180;
-    public static Double deg2rad(Double deg) {
+    public static final double DEG2RADHALFPI = PI / 180;
+    public static double deg2rad(double deg) {
         return deg * DEG2RADHALFPI;
     }
-    public static final Double RAD2DEGHALFPI = 180 / PI;
-    public static Double rad2deg(Double rad) {
+    public static final double RAD2DEGHALFPI = 180 / PI;
+    public static double rad2deg(double rad) {
         return rad * RAD2DEGHALFPI;
     }
 }

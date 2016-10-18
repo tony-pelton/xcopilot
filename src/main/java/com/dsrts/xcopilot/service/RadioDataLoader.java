@@ -46,8 +46,8 @@ public class RadioDataLoader {
     }
     private void populateNavigationGeoPoint(Scanner scanner,Integer code,NavigationGeoPoint navigationGeoPoint) {
         navigationGeoPoint.setCode(code);
-        navigationGeoPoint.setLatitude(new BigDecimal(scanner.next()).setScale(8));
-        navigationGeoPoint.setLongitude(new BigDecimal(scanner.next()).setScale(8));
+        navigationGeoPoint.setLatitude(scanner.nextFloat());
+        navigationGeoPoint.setLongitude(scanner.nextFloat());
         navigationGeoPoint.setElevationMSL(scanner.nextInt());
         navigationGeoPoint.setFrequency(new BigDecimal(scanner.next()).divide(new BigDecimal("100")).setScale(2));
         navigationGeoPoint.setRange(scanner.nextInt());

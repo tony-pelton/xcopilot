@@ -1,6 +1,5 @@
 package com.dsrts.xcopilot.model;
 
-import com.dsrts.xcopilot.model.GeoPoint;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
@@ -16,8 +15,8 @@ public class NavigationGeoPoint extends GeoPoint {
     public NavigationGeoPoint() {}
     public NavigationGeoPoint(
             Integer code,
-            BigDecimal latitude,
-            BigDecimal longitude,
+            Float latitude,
+            Float longitude,
             Integer elevationMSL,
             BigDecimal frequency,
             Integer range) {

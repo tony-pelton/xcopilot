@@ -51,6 +51,7 @@ public class RadioDataManager {
                 planePosition = point;
                 LOGGER.info("update() : "+planePosition);
                 loadFilteredRadioData();
+                applicationEventPublisher.publishEvent(new XcopilotEvent("persistproperty","xplane.location",planePosition));
             }
         }
     }

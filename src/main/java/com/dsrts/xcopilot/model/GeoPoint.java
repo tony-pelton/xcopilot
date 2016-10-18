@@ -2,56 +2,41 @@ package com.dsrts.xcopilot.model;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.math.BigDecimal;
-
 public class GeoPoint extends Geo {
-    private BigDecimal latitude;
-    private BigDecimal longitude;
+    private float latitude;
+    private float longitude;
 
     public GeoPoint() {}
     public GeoPoint(float latitude,float longitude) {
-        setLatitude(new BigDecimal(latitude));
-        setLongitude(new BigDecimal(longitude));
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public GeoPoint(BigDecimal latitude,BigDecimal longitude) {
-        setLatitude(latitude);
-        setLongitude(longitude);
-    }
-
-    public BigDecimal getLatitude() {
+    public float getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(BigDecimal latitude) {
-        this.latitude = latitude.setScale(8,BigDecimal.ROUND_HALF_EVEN);
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
     }
 
-    public BigDecimal getLongitude() {
+    public float getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(BigDecimal longitude) {
-        this.longitude = longitude.setScale(8,BigDecimal.ROUND_HALF_EVEN);
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
     }
 
-    public Double getLatitudeDouble() {
-        return latitude.doubleValue();
-    }
-
-    public Double getLongitudeDouble() {
-        return longitude.doubleValue();
-    }
-
-    public Double distanceToM(GeoPoint point) {
+    public float distanceToM(GeoPoint point) {
         return distanceM(this,point);
     }
 
-    public Double distanceToNM(GeoPoint point) {
+    public float distanceToNM(GeoPoint point) {
         return distanceNM(this,point);
     }
 
-    public Double distanceToKM(GeoPoint point) {
+    public float distanceToKM(GeoPoint point) {
         return distanceKM(this,point);
     }
 

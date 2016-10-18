@@ -6,8 +6,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PreDestroy;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
@@ -49,10 +51,14 @@ public class SettingsManager implements ApplicationListener<ApplicationReadyEven
         applicationEventPublisher.publishEvent(new XcopilotEvent("publishproperty",key,value));
     }
 
+    @EventListener(condition = "#xcopilotEvent.isEvent('persistproperty')")
+    private void consumeEvent(XcopilotEvent xcopilotEvent) {
+        setProperty(xcopilotEvent.getKey(),xcopilotEvent.getValue());
+    }
+
     public void setProperty(String key,Serializable value) {
         synchronized (properties) {
             properties.put(key,value);
-            persistProperties();
             publishEvent(key,value);
         }
     }
@@ -61,6 +67,7 @@ public class SettingsManager implements ApplicationListener<ApplicationReadyEven
         return (T)properties.get(key);
     }
 
+    @PreDestroy
     private void persistProperties() {
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(fileProperties);
