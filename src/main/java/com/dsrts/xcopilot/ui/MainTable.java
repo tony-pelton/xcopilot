@@ -3,7 +3,6 @@ package com.dsrts.xcopilot.ui;
 import com.dsrts.xcopilot.event.XcopilotEvent;
 import com.dsrts.xcopilot.model.NavigationGeoPoint;
 import com.dsrts.xcopilot.service.RadioDataManager;
-import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -16,6 +15,8 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.Collections.singletonMap;
 
 @Controller
 public class MainTable extends JTable {
@@ -46,7 +47,7 @@ public class MainTable extends JTable {
             NavigationGeoPoint navigationGeoPointAt = ((MainTableModel) getModel()).getNavDataAt(getSelectedRow());
             LOGGER.debug(navigationGeoPointAt.toString());
             applicationEventPublisher.publishEvent(
-                new XcopilotEvent("selectednavpoint","navpoint",navigationGeoPointAt)
+                new XcopilotEvent("selectednavpoint",singletonMap("navpoint",navigationGeoPointAt),this)
             );
         }
     }

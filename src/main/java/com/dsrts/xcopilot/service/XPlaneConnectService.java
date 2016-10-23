@@ -16,6 +16,7 @@ import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
+import static java.util.Collections.singletonMap;
 
 @Service
 public class XPlaneConnectService {
@@ -64,7 +65,7 @@ public class XPlaneConnectService {
                 if(!running.getAndSet(true)) {
                     LOGGER.info("scheduled() : x-plane is responding");
                 }
-                eventPublisher.publishEvent(new XcopilotEvent("telemetry","data",ImmutableMap.of(d_drefs[0],drefs_values[0],d_drefs[1],drefs_values[1])));
+                eventPublisher.publishEvent(new XcopilotEvent("telemetry",singletonMap("data",ImmutableMap.of(d_drefs[0],drefs_values[0],d_drefs[1],drefs_values[1])),this));
                 if (LOGGER.isDebugEnabled()) {
                     for(int y = 0;y < drefs_values.length;y++) {
                         for(int x = 0; x < drefs_values[y].length;x++) {

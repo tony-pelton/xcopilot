@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.singletonMap;
+
 @Service
 public class RadioDataManager {
 
@@ -32,28 +34,39 @@ public class RadioDataManager {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    @EventListener(condition = "#settingsManagerPropertyEvent.isEvent('publishproperty') && 'xplane.home'.equals(#settingsManagerPropertyEvent.getKey())")
-    protected void propertyListener(XcopilotEvent settingsManagerPropertyEvent) {
-        radioDataLoader = new RadioDataLoader(new File(settingsManagerPropertyEvent.<String>getValue()));
-        update(new GeoPoint(38.51513f,-122.81252f));
+    @EventListener(condition = "#settingsManagerPropertyEvent.isEvent('publishproperty')")
+    public synchronized void propertyListener(XcopilotEvent settingsManagerPropertyEvent) {
+        if(settingsManagerPropertyEvent.getSource() == this) {
+            return;
+        }
+        switch (settingsManagerPropertyEvent.<String>getKey()) {
+            case "xplane.home":
+                radioDataLoader = new RadioDataLoader(new File(settingsManagerPropertyEvent.<String>getValue()));
+                break;
+            case "xplane.location":
+                planePosition = settingsManagerPropertyEvent.getValue();
+                break;
+        }
+        if(null != radioDataLoader && null != planePosition) {
+            update();
+        }
     }
 
     @EventListener(condition = "#receiveEvent.isEvent('telemetry')")
-    protected void telemetryListener(XcopilotEvent receiveEvent) {
-        update(new GeoPoint(
-                receiveEvent.<Map<DREF,float[]>>getValue().get(DREF.SIM_FLIGHTMODEL_POSITION_LATITUDE)[0],
-                receiveEvent.<Map<DREF,float[]>>getValue().get(DREF.SIM_FLIGHTMODEL_POSITION_LONGITUDE)[0]));
+    public synchronized void telemetryListener(XcopilotEvent receiveEvent) {
+        GeoPoint geoPoint = new GeoPoint(
+                receiveEvent.<Map<DREF, float[]>>getValue().get(DREF.SIM_FLIGHTMODEL_POSITION_LATITUDE)[0],
+                receiveEvent.<Map<DREF, float[]>>getValue().get(DREF.SIM_FLIGHTMODEL_POSITION_LONGITUDE)[0]);
+        if (null != planePosition && geoPoint.distanceToNM(planePosition) > 10.0) {
+            planePosition = geoPoint;
+            applicationEventPublisher.publishEvent(new XcopilotEvent("persistproperty", singletonMap("xplane.location", planePosition),this));
+            update();
+        }
     }
 
-    private void update(GeoPoint point) {
-        if (null != radioDataLoader) {
-            if(null == planePosition || planePosition.distanceToNM(point) > 10.0) {
-                planePosition = point;
-                LOGGER.info("update() : "+planePosition);
-                loadFilteredRadioData();
-                applicationEventPublisher.publishEvent(new XcopilotEvent("persistproperty","xplane.location",planePosition));
-            }
-        }
+    private void update() {
+        LOGGER.info("update() : " + planePosition);
+        loadFilteredRadioData();
     }
 
     private void loadFilteredRadioData() {

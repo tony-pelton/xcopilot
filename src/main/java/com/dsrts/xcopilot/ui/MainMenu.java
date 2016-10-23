@@ -55,7 +55,7 @@ public class MainMenu extends JMenuBar {
             File fileResourcesDirectory = new File(home,"Resources");
             if(fileResourcesDirectory.isDirectory()) {
                 LOGGER.info("settingsHomeListener()", fileResourcesDirectory.isDirectory());
-                settingsManager.setProperty(SettingsManager.KEY_XPLANE_HOME,home.getAbsolutePath());
+                settingsManager.setProperty(SettingsManager.KEY_XPLANE_HOME,home.getAbsolutePath(),this);
             } else {
                 LOGGER.warn("decideXPlaneHome() : not x-plane home");
             }

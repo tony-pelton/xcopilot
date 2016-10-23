@@ -4,7 +4,6 @@ import com.dsrts.xcopilot.event.XcopilotEvent;
 import com.dsrts.xcopilot.model.LOCNavigationGeoPoint;
 import com.dsrts.xcopilot.model.NavigationGeoPoint;
 import com.dsrts.xcopilot.service.DREF;
-import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -14,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+
+import static java.util.Collections.singletonMap;
 
 @Controller
 public class SendButtonsPanel extends JPanel {
@@ -55,30 +56,30 @@ public class SendButtonsPanel extends JPanel {
         LOGGER.info(navigationGeoPoint.toString());
         if(actionEvent.getSource() == sendNav1Button) {
             publisher.publishEvent(
-                new XcopilotEvent("senddref",DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,navigationGeoPoint.getFrequencyForDREF())
+                new XcopilotEvent("senddref", singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,navigationGeoPoint.getFrequencyForDREF()),this)
             );
             // ils
             if(navigationGeoPoint.getCode().equals(4)) {
                 publisher.publishEvent(
-                    new XcopilotEvent("senddref",DREF.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGT,((LOCNavigationGeoPoint) navigationGeoPoint).getBearing())
+                    new XcopilotEvent("senddref",singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGT,((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()),this)
                 );
             }
             publisher.publishEvent(
-                new XcopilotEvent("selectedradio",DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,navigationGeoPoint)
+                new XcopilotEvent("selectedradio",singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV1_FREQ_HZ,navigationGeoPoint),this)
             );
         }
         if(actionEvent.getSource() == sendNav2Button) {
             publisher.publishEvent(
-                new XcopilotEvent("senddref",DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,navigationGeoPoint.getFrequencyForDREF())
+                new XcopilotEvent("senddref",singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,navigationGeoPoint.getFrequencyForDREF()),this)
             );
             // ils
             if (navigationGeoPoint.getCode().equals(4)) {
                 publisher.publishEvent(
-                    new XcopilotEvent("senddref",DREF.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGT,((LOCNavigationGeoPoint) navigationGeoPoint).getBearing())
+                    new XcopilotEvent("senddref",singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGT,((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()),this)
                 );
             }
             publisher.publishEvent(
-                new XcopilotEvent("selectedradio",DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,navigationGeoPoint)
+                new XcopilotEvent("selectedradio",singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV2_FREQ_HZ,navigationGeoPoint),this)
             );
         }
     }
