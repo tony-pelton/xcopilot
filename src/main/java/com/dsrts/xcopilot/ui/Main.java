@@ -18,7 +18,8 @@ public class Main extends JFrame implements WindowListener {
                 MainMenu mainMenu,
                 MainTable mainTable,
                 MainPushButtonPanel mainPushButtonPanel,
-                MainSelectedNavigationGeoPointPanel mainSelectedNavigationGeoPointPanel) {
+                MainSelectedNavigationGeoPointPanel mainSelectedNavigationGeoPointPanel,
+                MainTree mainTree) {
         this.kernel = kernel;
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -31,7 +32,10 @@ public class Main extends JFrame implements WindowListener {
         headPanel.add(mainSelectedNavigationGeoPointPanel);
         getContentPane().add(headPanel,BorderLayout.PAGE_START);
 
-        getContentPane().add(new JScrollPane(mainTable), BorderLayout.CENTER);
+//        getContentPane().add(new JScrollPane(mainTable), BorderLayout.CENTER);
+
+//        getContentPane().add(new JScrollPane(mainTree),BorderLayout.PAGE_END);
+        getContentPane().add(mainTree,BorderLayout.CENTER);
     }
 
     @PreDestroy
