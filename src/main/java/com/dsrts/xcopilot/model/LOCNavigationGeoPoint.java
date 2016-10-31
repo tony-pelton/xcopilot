@@ -35,6 +35,8 @@ public class LOCNavigationGeoPoint extends NavigationGeoPoint {
         return bearing;
     }
 
+    public Float getBearingF() { return new Float(bearing); }
+
     public void setBearing(Integer bearing) {
         this.bearing = bearing;
     }

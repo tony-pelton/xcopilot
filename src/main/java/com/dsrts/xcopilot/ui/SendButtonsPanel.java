@@ -61,7 +61,7 @@ public class SendButtonsPanel extends JPanel {
             // ils
             if(navigationGeoPoint.getCode().equals(4)) {
                 publisher.publishEvent(
-                    new XcopilotEvent("senddref",singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGT,((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()),this)
+                    new XcopilotEvent("senddref",singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV1_OBS_DEGT,((LOCNavigationGeoPoint) navigationGeoPoint).getBearingF()),this)
                 );
             }
             publisher.publishEvent(
@@ -75,7 +75,7 @@ public class SendButtonsPanel extends JPanel {
             // ils
             if (navigationGeoPoint.getCode().equals(4)) {
                 publisher.publishEvent(
-                    new XcopilotEvent("senddref",singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGT,((LOCNavigationGeoPoint) navigationGeoPoint).getBearing()),this)
+                    new XcopilotEvent("senddref",singletonMap(DREF.SIM_COCKPIT_RADIOS_NAV2_OBS_DEGT,((LOCNavigationGeoPoint) navigationGeoPoint).getBearingF()),this)
                 );
             }
             publisher.publishEvent(
